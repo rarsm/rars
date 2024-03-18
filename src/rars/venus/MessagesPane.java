@@ -53,7 +53,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  **/
 
 public class MessagesPane extends JTabbedPane {
-    JTextArea assemble, run;
+    JTextArea assemble, runInput, runOutput;
     private JPanel assembleTab, runTab;
     // These constants are designed to keep scrolled contents of the
     // two message areas from becoming overwhelmingly large (which
@@ -72,16 +72,20 @@ public class MessagesPane extends JTabbedPane {
         super();
         this.setMinimumSize(new Dimension(0, 0));
         assemble = new JTextArea();
-        run = new JTextArea();
+        runInput = new JTextArea();
+        runOutput = new JTextArea();
         assemble.setEditable(false);
-        run.setEditable(false);
+        runInput.setEditable(false);
+        runOutput.setEditable(false);
+        runOutput.setBackground(Color.LIGHT_GRAY);
         // Set both text areas to mono font.  For assemble
         // pane, will make messages more readable.  For run
         // pane, will allow properly aligned "text graphics"
         // DPS 15 Dec 2008
         Font monoFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
         assemble.setFont(monoFont);
-        run.setFont(monoFont);
+        runInput.setFont(monoFont);
+        runOutput.setFont(monoFont);
 
         JButton assembleTabClearButton = new JButton("Clear");
         assembleTabClearButton.setToolTipText("Clear the Messages area");
@@ -164,13 +168,31 @@ public class MessagesPane extends JTabbedPane {
         runTabClearButton.addActionListener(
                 new ActionListener() {
                     public void actionPerformed(ActionEvent e) {
-                        run.setText("");
+                        runInput.setText("");
+                        runOutput.setText("");
                     }
                 });
         runTab = new JPanel(new BorderLayout());
         runTab.add(createBoxForButton(runTabClearButton), BorderLayout.WEST);
-        runTab.add(new JScrollPane(run, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
-                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+
+        JPanel runIOTextboxes = new JPanel(new GridLayout(0,2));
+
+        JPanel runInputZone = new JPanel();
+        runInputZone.setLayout(new BoxLayout(runInputZone, BoxLayout.Y_AXIS));
+        runInputZone.add(new JLabel("Input"));
+        runInputZone.add(new JScrollPane(runInput, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+
+        JPanel runOutputZone = new JPanel();
+        runOutputZone.setLayout(new BoxLayout(runOutputZone, BoxLayout.Y_AXIS));
+        runOutputZone.add(new JLabel("Output"));
+        runOutputZone.add(new JScrollPane(runOutput, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+
+        runIOTextboxes.add(runInputZone);
+        runIOTextboxes.add(runOutputZone);
+
+        runTab.add(runIOTextboxes, BorderLayout.CENTER);
 
         this.addTab("Messages", assembleTab);
         this.addTab("Run I/O", runTab);
@@ -273,7 +295,7 @@ public class MessagesPane extends JTabbedPane {
      * @return runtime message text component
      */
     public JTextArea getRunTextArea() {
-        return run;
+        return runInput;
     }
 
     /**
@@ -314,13 +336,13 @@ public class MessagesPane extends JTabbedPane {
                 new Runnable() {
                     public void run() {
                         setSelectedComponent(runTab);
-                        run.append(mess);
+                        runOutput.append(mess);
                         // can do some crude cutting here.  If the document gets "very large",
                         // let's cut off the oldest text. This will limit scrolling but the limit
                         // can be set reasonably high.
-                        if (run.getDocument().getLength() > MAXIMUM_SCROLLED_CHARACTERS) {
+                        if (runOutput.getDocument().getLength() > MAXIMUM_SCROLLED_CHARACTERS) {
                             try {
-                                run.getDocument().remove(0, NUMBER_OF_CHARACTERS_TO_CUT);
+                                runOutput.getDocument().remove(0, NUMBER_OF_CHARACTERS_TO_CUT);
                             } catch (BadLocationException ble) {
                                 // only if NUMBER_OF_CHARACTERS_TO_CUT > MAXIMUM_SCROLLED_CHARACTERS
                             }
@@ -448,7 +470,7 @@ public class MessagesPane extends JTabbedPane {
                                     public void run() {
                                         if ((e.getDocument().getLength() < initialPos || e.getOffset() < initialPos) && e instanceof UndoableEdit) {
                                             ((UndoableEdit) e).undo();
-                                            run.setCaretPosition(e.getOffset() + e.getLength());
+                                            runInput.setCaretPosition(e.getOffset() + e.getLength());
                                         }
                                     }
                                 });
@@ -461,14 +483,14 @@ public class MessagesPane extends JTabbedPane {
                 new NavigationFilter() {
                     public void moveDot(FilterBypass fb, int dot, Bias bias) {
                         if (dot < initialPos) {
-                            dot = Math.min(initialPos, run.getDocument().getLength());
+                            dot = Math.min(initialPos, runInput.getDocument().getLength());
                         }
                         fb.moveDot(dot, bias);
                     }
 
                     public void setDot(FilterBypass fb, int dot, Bias bias) {
                         if (dot < initialPos) {
-                            dot = Math.min(initialPos, run.getDocument().getLength());
+                            dot = Math.min(initialPos, runInput.getDocument().getLength());
                         }
                         fb.setDot(dot, bias);
                     }
@@ -482,12 +504,12 @@ public class MessagesPane extends JTabbedPane {
 
         public void run() { // must be invoked from the GUI thread
             selectRunMessageTab();
-            run.setEditable(true);
-            run.requestFocusInWindow();
-            run.setCaretPosition(run.getDocument().getLength());
-            initialPos = run.getCaretPosition();
-            run.setNavigationFilter(navigationFilter);
-            run.getDocument().addDocumentListener(listener);
+            runInput.setEditable(true);
+            runInput.requestFocusInWindow();
+            runInput.setCaretPosition(runInput.getDocument().getLength());
+            initialPos = runInput.getCaretPosition();
+            runInput.setNavigationFilter(navigationFilter);
+            runInput.getDocument().addDocumentListener(listener);
             Simulator.getInstance().addStopListener(stopListener);
         }
 
@@ -495,10 +517,10 @@ public class MessagesPane extends JTabbedPane {
             EventQueue.invokeLater(
                     new Runnable() {
                         public void run() {
-                            run.getDocument().removeDocumentListener(listener);
-                            run.setEditable(false);
-                            run.setNavigationFilter(null);
-                            run.setCaretPosition(run.getDocument().getLength());
+                            runInput.getDocument().removeDocumentListener(listener);
+                            runInput.setEditable(false);
+                            runInput.setNavigationFilter(null);
+                            runInput.setCaretPosition(runInput.getDocument().getLength());
                             Simulator.getInstance().removeStopListener(stopListener);
                         }
                     });
@@ -506,9 +528,9 @@ public class MessagesPane extends JTabbedPane {
 
         void returnResponse() {
             try {
-                int p = Math.min(initialPos, run.getDocument().getLength());
-                int l = Math.min(run.getDocument().getLength() - p, maxLen >= 0 ? maxLen : Integer.MAX_VALUE);
-                resultQueue.offer(run.getText(p, l));
+                int p = Math.min(initialPos, runInput.getDocument().getLength());
+                int l = Math.min(runInput.getDocument().getLength() - p, maxLen >= 0 ? maxLen : Integer.MAX_VALUE);
+                resultQueue.offer(runInput.getText(p, l));
             } catch (BadLocationException ex) {
                 // this cannot happen
                 resultQueue.offer("");
