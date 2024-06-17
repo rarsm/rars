@@ -73,6 +73,7 @@ public class RISCVTokenMarker extends TokenMarker {
 
 
     public byte markTokensImpl(byte token, Segment line, int lineIndex) {
+        findLabelKeywords();
         char[] array = line.array;
         int offset = line.offset;
         lastOffset = offset;
@@ -193,6 +194,33 @@ public class RISCVTokenMarker extends TokenMarker {
         }
 
         return token;
+    }
+
+    private void findLabelKeywords() {
+        labelKeywords = new KeywordMap(false);
+        if (Globals.getGui().getMainPane().getEditPane() != null) {
+            char[] array = Globals.getGui().getMainPane().getEditPane().getSource().toCharArray();
+            int lastNewLine = 0;
+            int currentIndex = 0;
+
+            for (char c : array) {
+                if (c == '\n')
+                    lastNewLine = currentIndex;
+                if (c == ':') {
+                    boolean validIdentifier = false;
+                    String lab = new String(array, lastNewLine, currentIndex - lastNewLine).trim();
+                    try {
+                        validIdentifier = rars.assembler.TokenTypes.isValidIdentifier(lab);
+                    } catch (StringIndexOutOfBoundsException e) {
+                        validIdentifier = false;
+                    }
+                    if (validIdentifier) {
+                        labelKeywords.add(lab, Token.LABEL);
+                    }
+                }
+                currentIndex++;
+            }
+        }
     }
 
     /**
@@ -455,6 +483,7 @@ public class RISCVTokenMarker extends TokenMarker {
     private static KeywordMap cKeywords;
     private static String[] tokenLabels, tokenExamples;
     private KeywordMap keywords;
+    private KeywordMap labelKeywords = new KeywordMap(false);
     private int lastOffset;
     private int lastKeyword;
 
@@ -463,6 +492,8 @@ public class RISCVTokenMarker extends TokenMarker {
 
         int len = i - lastKeyword;
         byte id = keywords.lookup(line, lastKeyword, len);
+        if (id == Token.NULL)
+            id = labelKeywords.lookup(line, lastKeyword, len);
         if (id != Token.NULL) {
             // If this is a Token.KEYWORD1 and line already contains a keyword,
             // then assume this one is a label reference and ignore it.
