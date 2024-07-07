@@ -1,6 +1,7 @@
 out
 .idea
 *.class
+.gradle
 
 # Build products
 build

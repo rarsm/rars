@@ -1,0 +1,40 @@
+plugins {
+	id 'application'
+	id 'java'
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+java {
+	sourceCompatibility = '1.8'
+	targetCompatibility = '1.8'
+	archivesBaseName = 'rars'
+}
+
+repositories {
+	mavenCentral()
+	gradlePluginPortal()
+}
+
+dependencies {
+	var flatlafVersion = "3.4"
+	implementation( "com.formdev:flatlaf:${flatlafVersion}" )
+	implementation( "com.formdev:flatlaf:${flatlafVersion}:linux-x86_64@so" )
+	implementation( "com.formdev:flatlaf:${flatlafVersion}:macos-arm64@dylib" )
+	implementation( "com.formdev:flatlaf:${flatlafVersion}:macos-x86_64@dylib" )
+	implementation( "com.formdev:flatlaf:${flatlafVersion}:windows-x86_64@dll" )
+}
+
+sourceSets.main {
+	java.srcDirs = ['src/']
+	resources.srcDirs = ["src/"]
+}
+
+application {
+	mainClass = 'rars.Launch'
+}
+
+jar {
+	manifest {
+		attributes 'Main-Class': 'rars.Launch'
+	}
+}

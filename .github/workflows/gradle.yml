@@ -1,0 +1,33 @@
+name: gradle
+on:
+  push:
+    braches:
+    - master
+  pull_request:
+    braches:
+    - master
+
+jobs:
+  gradle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: 8.8
+
+      - run: gradle check
+      - run: gradle jar
+      - run: gradle shadowJar
+
+      - uses: actions/upload-artifact@v4
+        with:
+          path: build/libs/
