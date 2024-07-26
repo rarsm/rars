@@ -158,7 +158,11 @@ public class Settings extends Observable {
          * Flag to determine whether to calculate relative paths from the current working directory
          * or from the RARS executable path.
         */
-        DERIVE_CURRENT_WORKING_DIRECTORY("DeriveCurrentWorkingDirectory", false);
+        DERIVE_CURRENT_WORKING_DIRECTORY("DeriveCurrentWorkingDirectory", false),
+        /**
+         * Flag to determine whether rars is in dark mode instead of light mode.
+         */
+        DARK_MODE_ENABLED("DarkModeEnabled", false);
 
         // TODO: add option for turning off user trap handling and interrupts
         private String name;
