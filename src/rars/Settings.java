@@ -1314,4 +1314,49 @@ public class Settings extends Observable {
         return list;
     }
 
+    /*
+     * Sets dark default syntax styles and dark default color settings/highlights.
+     * If light default was used as current color, changes to dark default. If custom colors, doesn't change them.
+     */
+    public void setDarkMode() {
+        //sets dark syntax styles, if light default was used before as color, changes it to dark default
+        SyntaxUtilities.setDarkDefaultStyles();
+        SyntaxStyle[] syntaxStyle = SyntaxUtilities.getDefaultSyntaxStyles();
+        defaultSyntaxStyleColorSettingsValues = new String[syntaxStyle.length];
+        for (int i = 0; i < syntaxStyle.length; i++) {
+            defaultSyntaxStyleColorSettingsValues[i] = syntaxStyle[i].getColorAsHexString();
+        }
+        SyntaxStyle[] lightDefault = SyntaxUtilities.getLightDefaultSyntaxStyles();
+        for (int i = 0; i < syntaxStyleColorSettingsValues.length ; i++) {
+            if (syntaxStyleColorSettingsValues[i].equals(lightDefault[i].getColorAsHexString())) {
+                syntaxStyleColorSettingsValues[i] = defaultSyntaxStyleColorSettingsValues[i];
+            }
+        }
+        //sets dark color settings, if default was used before, changes it to dark default
+        String[] tempDarkDefaultSettingsValue = defaultDarkColorSettingsValues;
+        for (int i = 0; i < colorSettingsValues.length; i++) {
+            if (colorSettingsValues[i].equals(defaultColorSettingsValues[i])) {
+                colorSettingsValues[i] = tempDarkDefaultSettingsValue[i];
+            }
+        }
+        defaultColorSettingsValues = tempDarkDefaultSettingsValue;
+    }
+
+    /*
+     * If dark default colors were used, changes to light default
+     */
+    public void setLightMode() {
+        SyntaxStyle[] darkDefault = SyntaxUtilities.getDarkDefaultSyntaxStyles();
+        for (int i = 0; i < syntaxStyleColorSettingsValues.length; i++) {
+            if (syntaxStyleColorSettingsValues[i].equals(darkDefault[i].getColorAsHexString())) {
+                syntaxStyleColorSettingsValues[i] = defaultSyntaxStyleColorSettingsValues[i];
+            }
+        }
+        for (int i = 0; i < colorSettingsValues.length; i++) {
+            if (colorSettingsValues[i].equals(defaultDarkColorSettingsValues[i])) {
+                colorSettingsValues[i] = defaultColorSettingsValues[i];
+            }
+        }
+    }
+
 }

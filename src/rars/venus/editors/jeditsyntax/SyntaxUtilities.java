@@ -27,6 +27,8 @@ import java.awt.event.MouseEvent;
  * @version $Id: SyntaxUtilities.java,v 1.9 1999/12/13 03:40:30 sp Exp $
  */
 public class SyntaxUtilities {
+
+    private static SyntaxStyle[] defaultStyles = getLightDefaultSyntaxStyles();
     /**
      * Checks if a subregion of a <code>Segment</code> is equal to a
      * string.
@@ -89,6 +91,13 @@ public class SyntaxUtilities {
      * to use the default syntax styles.
      */
     public static SyntaxStyle[] getDefaultSyntaxStyles() {
+        return defaultStyles;
+    }
+
+    /**
+     * Returns the light default style table.
+     */
+    public static SyntaxStyle[] getLightDefaultSyntaxStyles() {
         SyntaxStyle[] styles = new SyntaxStyle[Token.ID_COUNT];
 
         // SyntaxStyle constructor params: color, italic?, bold?
@@ -129,6 +138,13 @@ public class SyntaxUtilities {
         styles[Token.INVALID] = new SyntaxStyle(Color.red, false, false);
         styles[Token.MACRO_ARG] = new SyntaxStyle(new Color(150, 150, 0), false, false);
         return styles;
+    }
+
+    /**
+     * sets the default style table to the dark default
+     */
+    public static void setDarkDefaultStyles() {
+        defaultStyles = getDarkDefaultSyntaxStyles();
     }
 
     /**
