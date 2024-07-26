@@ -386,6 +386,8 @@ public class Settings extends Observable {
      */
     private static String[] defaultColorSettingsValues = {
             "0x00e0e0e0", "0", "0x00ffffff", "0", "0x00ffff99", "0", "0x0033ff00", "0", "0x00ff8080", "0", "0x0099ccff","0", "0x00ffffff", "0x00000000", "0x00eeeeee", "0x00ccccff", "0x00000000"};
+    private static String[] defaultDarkColorSettingsValues = {
+            "0x00e0e0e0", "0", "0x00a0a0a0", "0", "0x00ffff99", "0", "0x0033ff00", "0", "0x00ffaaaa", "0", "0x0099ccff", "0", "0x00202020", "0x00bbbbbb","0x00333333", "0x00304060", "0x00bbbbbb"};
 
     interface SystemColorProvider { Color getColor();}
     private SystemColorProvider[] systemColors;
