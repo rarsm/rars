@@ -270,7 +270,6 @@ public class MessagesPane extends JPanel {
         leftPane.addTab("Messages", assembleTab);
         leftPane.addTab("Run I/O", runioTab);
         leftPane.addTab("Program Arguments", programArgumentsPanel);
-        leftPane.setForeground(Color.BLACK);
 
         leftPane.setToolTipTextAt(0, "Messages produced by Run menu. Click on assemble error message to select erroneous line");
         leftPane.setToolTipTextAt(1, "Simulated console input (used while running) and other run messages");

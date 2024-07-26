@@ -76,8 +76,6 @@ public class MainPane extends JTabbedPane {
 
         this.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
         this.addTab(editTabTitle, editTabIcon, editTabbedPane);
-        this.setForeground(Color.black);
-
         this.addTab(executeTabTitle, executeTabIcon, executeTab);
 
         this.setToolTipTextAt(0, "Text editor for composing RISCV programs.");
