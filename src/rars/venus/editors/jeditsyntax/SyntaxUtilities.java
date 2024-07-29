@@ -111,6 +111,7 @@ public class SyntaxUtilities {
         styles[Token.LITERAL1] = new SyntaxStyle(new Color(0x00CC33), false, false);//(new Color(0x650099),false,false);
         styles[Token.LITERAL2] = new SyntaxStyle(new Color(0x00CC33), false, false);//(new Color(0x650099),false,true);
         styles[Token.LABEL] = new SyntaxStyle(Color.black, true, false);//(new Color(0x990033),false,true);
+        styles[Token.SYMBOL] = new SyntaxStyle(new Color(0x006666), false, false);
         styles[Token.OPERATOR] = new SyntaxStyle(Color.black, false, true);
         styles[Token.INVALID] = new SyntaxStyle(Color.red, false, false);
         styles[Token.MACRO_ARG] = new SyntaxStyle(new Color(150, 150, 0), false, false);
@@ -173,6 +174,7 @@ public class SyntaxUtilities {
         styles[Token.OPERATOR] = Globals.getSettings().getEditorSyntaxStyleByPosition(Token.OPERATOR);
         styles[Token.INVALID] = Globals.getSettings().getEditorSyntaxStyleByPosition(Token.INVALID);
         styles[Token.MACRO_ARG] = Globals.getSettings().getEditorSyntaxStyleByPosition(Token.MACRO_ARG);
+        styles[Token.SYMBOL] = Globals.getSettings().getEditorSyntaxStyleByPosition(Token.SYMBOL);
         return styles;
     }
 
