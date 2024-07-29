@@ -47,6 +47,7 @@ public class RISCVTokenMarker extends TokenMarker {
             tokenLabels[Token.LITERAL1] = "String literal";
             tokenLabels[Token.LITERAL2] = "Character literal";
             tokenLabels[Token.LABEL] = "Label";
+            tokenLabels[Token.SYMBOL] = "Symbol";
             tokenLabels[Token.KEYWORD1] = "Instruction";
             tokenLabels[Token.KEYWORD2] = "Assembler directive";
             tokenLabels[Token.KEYWORD3] = "Register";
@@ -63,6 +64,7 @@ public class RISCVTokenMarker extends TokenMarker {
             tokenExamples[Token.LITERAL1] = "\"First\"";
             tokenExamples[Token.LITERAL2] = "'\\n'";
             tokenExamples[Token.LABEL] = "main:";
+            tokenExamples[Token.SYMBOL] = "PrintInt";
             tokenExamples[Token.KEYWORD1] = "lui";
             tokenExamples[Token.KEYWORD2] = ".text";
             tokenExamples[Token.KEYWORD3] = "zero";
