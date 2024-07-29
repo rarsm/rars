@@ -250,13 +250,17 @@ public enum TokenTypes {
     // DPS 14-Jul-2008: added '$' as valid symbol.  Permits labels to include $.
     //                  MIPS-target GCC will produce labels that start with $.
     public static boolean isValidIdentifier(String value) {
-        boolean result =
-                (Character.isLetter(value.charAt(0)) || value.charAt(0) == '_' || value.charAt(0) == '.' || value.charAt(0) == '$');
-        int index = 1;
-        while (result && index < value.length()) {
-            if (!(Character.isLetterOrDigit(value.charAt(index)) || value.charAt(index) == '_' || value.charAt(index) == '.' || value.charAt(index) == '$'))
-                result = false;
-            index++;
+        boolean result;
+        try {
+            result = (Character.isLetter(value.charAt(0)) || value.charAt(0) == '_' || value.charAt(0) == '.' || value.charAt(0) == '$');
+            int index = 1;
+            while (result && index < value.length()) {
+                if (!(Character.isLetterOrDigit(value.charAt(index)) || value.charAt(index) == '_' || value.charAt(index) == '.' || value.charAt(index) == '$'))
+                    result = false;
+                index++;
+            }
+        } catch (StringIndexOutOfBoundsException e) {
+            result = false;
         }
         return result;
     }
