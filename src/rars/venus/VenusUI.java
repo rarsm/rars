@@ -618,6 +618,13 @@ public class VenusUI extends JFrame {
         settingsDeriveCurrentWorkingDirectory.setSelected(Globals.getSettings().getBooleanSetting(Settings.Bool.DERIVE_CURRENT_WORKING_DIRECTORY));
         settingsDarkMode = new JCheckBoxMenuItem(settingsDarkModeAction);
         settingsDarkMode.setSelected(Globals.getSettings().getBooleanSetting(Settings.Bool.DARK_MODE_ENABLED));
+        settingsDarkMode.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // popup to ask for restart to apply new setting
+                JOptionPane.showMessageDialog(settingsDarkMode,
+                        "Please restart RARS to apply the new setting.");
+            }
+        });
         settingsAssembleOnOpen = new JCheckBoxMenuItem(settingsAssembleOnOpenAction);
         settingsAssembleOnOpen.setSelected(Globals.getSettings().getBooleanSetting(Settings.Bool.ASSEMBLE_ON_OPEN));
         settingsAssembleAll = new JCheckBoxMenuItem(settingsAssembleAllAction);
