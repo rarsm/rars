@@ -378,16 +378,21 @@ public class Settings extends Observable {
             "ExplicitWriteHighlightBackground", "ExplicitWriteHighlightForeground",
             "ExplicitReadHighlightBackground", "ExplicitReadHighlightForeground",
             "EditorBackground", "EditorForeground", "EditorLineHighlight", "EditorSelection", "EditorCaretColor"};
+
+    // default light color settings for editor (not syntax) and execute/register panes
+    private static String[] defaultLightColorSettingsValues = {
+            "0x00e0e0e0", "0", "0x00ffffff", "0", "0x00ffff99", "0", "0x0033ff00", "0", "0x00ffaaaa", "0", "0x0099ccff","0", "0x00ffffff", "0x00000000", "0x00eeeeee", "0x00ccccff", "0x00000000"};
+
+    // default dark color settings for editor (not syntax) and execute/register panes
+    private static String[] defaultDarkColorSettingsValues = {
+            "0x00333333", "0x00cccccc", "0x00202020", "0x00cccccc", "0x00ffff99", "0", "0x0033ff00", "0", "0x00ffaaaa", "0", "0x0099ccff", "0", "0x00202020", "0x00bbbbbb","0x00333333", "0x00304060", "0x00bbbbbb"};
     /**
      * Last resort default values for color settings;
      * will use only if neither the Preferences nor the properties file work.
      * If you wish to change, do so before instantiating the Settings object.
      * Must match key by list position.
      */
-    private static String[] defaultColorSettingsValues = {
-            "0x00e0e0e0", "0", "0x00ffffff", "0", "0x00ffff99", "0", "0x0033ff00", "0", "0x00ffaaaa", "0", "0x0099ccff","0", "0x00ffffff", "0x00000000", "0x00eeeeee", "0x00ccccff", "0x00000000"};
-    private static String[] defaultDarkColorSettingsValues = {
-            "0x00333333", "0x00cccccc", "0x00202020", "0x00cccccc", "0x00ffff99", "0", "0x0033ff00", "0", "0x00ffaaaa", "0", "0x0099ccff", "0", "0x00202020", "0x00bbbbbb","0x00333333", "0x00304060", "0x00bbbbbb"};
+    private static String[] defaultColorSettingsValues = defaultLightColorSettingsValues;
 
     interface SystemColorProvider { Color getColor();}
     private SystemColorProvider[] systemColors;
@@ -1319,44 +1324,47 @@ public class Settings extends Observable {
      * If light default was used as current color, changes to dark default. If custom colors, doesn't change them.
      */
     public void setDarkMode() {
-        //sets dark syntax styles, if light default was used before as color, changes it to dark default
+        defaultColorSettingsValues = defaultDarkColorSettingsValues;
         SyntaxUtilities.setDarkDefaultStyles();
         SyntaxStyle[] syntaxStyle = SyntaxUtilities.getDefaultSyntaxStyles();
         defaultSyntaxStyleColorSettingsValues = new String[syntaxStyle.length];
-        for (int i = 0; i < syntaxStyle.length; i++) {
+        for (int i = 0; i < syntaxStyle.length; i++)
             defaultSyntaxStyleColorSettingsValues[i] = syntaxStyle[i].getColorAsHexString();
-        }
-        SyntaxStyle[] lightDefault = SyntaxUtilities.getLightDefaultSyntaxStyles();
-        for (int i = 0; i < syntaxStyleColorSettingsValues.length ; i++) {
-            if (syntaxStyleColorSettingsValues[i].equals(lightDefault[i].getColorAsHexString())) {
-                syntaxStyleColorSettingsValues[i] = defaultSyntaxStyleColorSettingsValues[i];
-            }
-        }
-        //sets dark color settings, if default was used before, changes it to dark default
-        String[] tempDarkDefaultSettingsValue = defaultDarkColorSettingsValues;
-        for (int i = 0; i < colorSettingsValues.length; i++) {
-            if (colorSettingsValues[i].equals(defaultColorSettingsValues[i])) {
-                colorSettingsValues[i] = tempDarkDefaultSettingsValue[i];
-            }
-        }
-        defaultColorSettingsValues = tempDarkDefaultSettingsValue;
+
+        oldDefaultToNew(SyntaxUtilities.getLightDefaultSyntaxStyles(), defaultSyntaxStyleColorSettingsValues,
+                defaultLightColorSettingsValues, defaultDarkColorSettingsValues);
     }
 
     /*
-     * If dark default colors were used, changes to light default
+     * Sets light default syntax styles and light default color settings/highlights.
+     * If dark default was used as current color, changes to light default. If custom colors, doesn't change them.
      */
     public void setLightMode() {
-        SyntaxStyle[] darkDefault = SyntaxUtilities.getDarkDefaultSyntaxStyles();
-        for (int i = 0; i < syntaxStyleColorSettingsValues.length; i++) {
-            if (syntaxStyleColorSettingsValues[i].equals(darkDefault[i].getColorAsHexString())) {
-                syntaxStyleColorSettingsValues[i] = defaultSyntaxStyleColorSettingsValues[i];
+        defaultColorSettingsValues = defaultLightColorSettingsValues;
+        SyntaxUtilities.setLightDefaultStyles();
+        SyntaxStyle[] syntaxStyle = SyntaxUtilities.getDefaultSyntaxStyles();
+        defaultSyntaxStyleColorSettingsValues = new String[syntaxStyle.length];
+        for (int i = 0; i < syntaxStyle.length; i++)
+            defaultSyntaxStyleColorSettingsValues[i] = syntaxStyle[i].getColorAsHexString();
+
+        oldDefaultToNew(SyntaxUtilities.getDarkDefaultSyntaxStyles(), defaultSyntaxStyleColorSettingsValues,
+                defaultDarkColorSettingsValues, defaultColorSettingsValues);
+    }
+
+    /*
+     * Sets current colors to the new default colors specified iff it was set to the opposite default before.
+     */
+    private void oldDefaultToNew(SyntaxStyle[] oppositeSyntaxDefault, String[] newDefaultSyntax,
+                                 String[] oppositeDefaultColorSettingsValues, String[] newDefaultColorSettingsValues) {
+        for (int i = 0; i < syntaxStyleColorSettingsValues.length; i++)
+            if (syntaxStyleColorSettingsValues[i].equals(oppositeSyntaxDefault[i].getColorAsHexString())) {
+                syntaxStyleColorSettingsValues[i] = newDefaultSyntax[i];
             }
-        }
-        for (int i = 0; i < colorSettingsValues.length; i++) {
-            if (colorSettingsValues[i].equals(defaultDarkColorSettingsValues[i])) {
-                colorSettingsValues[i] = defaultColorSettingsValues[i];
+
+        for (int i = 0; i < colorSettingsValues.length; i++)
+            if (colorSettingsValues[i].equals(oppositeDefaultColorSettingsValues[i])) {
+                colorSettingsValues[i] = newDefaultColorSettingsValues[i];
             }
-        }
     }
 
 }

@@ -620,9 +620,19 @@ public class VenusUI extends JFrame {
         settingsDarkMode.setSelected(Globals.getSettings().getBooleanSetting(Settings.Bool.DARK_MODE_ENABLED));
         settingsDarkMode.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                // popup to ask for restart to apply new setting
-                JOptionPane.showMessageDialog(settingsDarkMode,
-                        "Please restart RARS to apply the new setting.");
+                try {
+                    if (settingsDarkMode.isSelected()) {
+                        UIManager.setLookAndFeel("com.formdev.flatlaf.FlatDarkLaf");
+                        SwingUtilities.updateComponentTreeUI(mainUI);
+                        Globals.getSettings().setDarkMode();
+                    } else {
+                        UIManager.setLookAndFeel("com.formdev.flatlaf.FlatIntelliJLaf");
+                        SwingUtilities.updateComponentTreeUI(mainUI);
+                        Globals.getSettings().setLightMode();
+                    }
+                } catch (Exception ex) {
+                    System.err.println( "Failed to initialize LaF. Continue with default LaF." );
+                }
             }
         });
         settingsAssembleOnOpen = new JCheckBoxMenuItem(settingsAssembleOnOpenAction);

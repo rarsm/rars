@@ -147,6 +147,10 @@ public class SyntaxUtilities {
         defaultStyles = getDarkDefaultSyntaxStyles();
     }
 
+    public static void setLightDefaultStyles() {
+        defaultStyles = getLightDefaultSyntaxStyles();
+    }
+
     /**
      * Returns the CURRENT style table. This can be passed to the
      * <code>setStyles()</code> method of <code>SyntaxDocument</code>
