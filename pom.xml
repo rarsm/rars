@@ -108,6 +108,35 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<groupId>org.panteleyev</groupId>
+				<artifactId>jpackage-maven-plugin</artifactId>
+				<version>1.6.4</version>
+
+				<executions>
+					<execution>
+						<id>package-application</id>
+						<phase>jpackage</phase>
+						<goals>
+							<goal>jpackage</goal>
+						</goals>
+
+						<configuration>
+							<name>RARS</name>
+							<appVersion>1.6</appVersion>
+							<vendor>Privat</vendor>
+							<mainClass>rars.Launch</mainClass>
+							<mainJar>${project.build.finalName}.jar</mainJar>
+							<type>dmg</type>
+							<icon>${project.basedir}/res/riscv2.icns</icon>
+							<dest>${project.basedir}</dest>
+							<copyright>MIT License</copyright>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 	<reporting>
