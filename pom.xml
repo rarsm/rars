@@ -140,6 +140,30 @@
 						</configuration>
 					</execution>
 
+					<!-->Windows package<-->
+					<execution>
+						<id>win</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jpackage</goal>
+						</goals>
+						<configuration>
+							<icon>${project.basedir}/res/riscvColor.ico</icon>
+						</configuration>
+					</execution>
+
+					<!-->Linux package<-->
+					<execution>
+						<id>linux</id>
+						<phase>package</phase>
+						<goals>
+							<goal>jpackage</goal>
+						</goals>
+						<configuration>
+							<icon>${project.basedir}/res/riscvColor.png</icon>
+						</configuration>
+					</execution>
+
 				</executions>
 			</plugin>
 
