@@ -128,6 +128,7 @@
 				</configuration>
 
 				<executions>
+					<!-->MAC package<-->
 					<execution>
 						<id>mac</id>
 						<phase>package</phase>
