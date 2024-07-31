@@ -137,6 +137,7 @@
 						</goals>
 						<configuration>
 							<icon>${project.basedir}/res/riscvColor.icns</icon>
+							<!--><description>RISC-V Assembler and Runtime Simulator</description><-->
 						</configuration>
 					</execution>
 
@@ -163,7 +164,6 @@
 							<icon>${project.basedir}/res/riscvColor.png</icon>
 						</configuration>
 					</execution>
-
 				</executions>
 			</plugin>
 
