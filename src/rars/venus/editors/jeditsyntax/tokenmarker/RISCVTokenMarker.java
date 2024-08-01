@@ -47,6 +47,7 @@ public class RISCVTokenMarker extends TokenMarker {
             tokenLabels[Token.LITERAL1] = "String literal";
             tokenLabels[Token.LITERAL2] = "Character literal";
             tokenLabels[Token.LABEL] = "Label";
+            tokenLabels[Token.SYMBOL] = "Symbol";
             tokenLabels[Token.KEYWORD1] = "Instruction";
             tokenLabels[Token.KEYWORD2] = "Assembler directive";
             tokenLabels[Token.KEYWORD3] = "Register";
@@ -63,6 +64,7 @@ public class RISCVTokenMarker extends TokenMarker {
             tokenExamples[Token.LITERAL1] = "\"First\"";
             tokenExamples[Token.LITERAL2] = "'\\n'";
             tokenExamples[Token.LABEL] = "main:";
+            tokenExamples[Token.SYMBOL] = "PrintInt";
             tokenExamples[Token.KEYWORD1] = "lui";
             tokenExamples[Token.KEYWORD2] = ".text";
             tokenExamples[Token.KEYWORD3] = "zero";
@@ -76,7 +78,7 @@ public class RISCVTokenMarker extends TokenMarker {
     public void updated(DocumentEvent evt) {
         SyntaxDocument document = (SyntaxDocument) evt.getDocument();
         // clear info and retokenize all to collect label definitions
-        labelKeywords.clear();
+        changingKeywords.clear();
         document.tokenizeLines();
     }
 
@@ -140,9 +142,9 @@ public class RISCVTokenMarker extends TokenMarker {
                                 addToken(i1 - lastOffset, Token.LABEL);
                                 lastOffset = lastKeyword = i1;
                                 // Register the label, if new, to recognize its usages
-                                byte t = labelKeywords.lookup(label);
+                                byte t = changingKeywords.lookup(label);
                                 if (t == Token.NULL) {
-                                    labelKeywords.add(label, Token.LABEL);
+                                    changingKeywords.add(label, Token.LABEL);
                                 }
                             }
                             break;
@@ -469,18 +471,32 @@ public class RISCVTokenMarker extends TokenMarker {
     // private members
     private static KeywordMap cKeywords;
     private static String[] tokenLabels, tokenExamples;
-    private KeywordMap labelKeywords = new KeywordMap(false);
+    private KeywordMap changingKeywords = new KeywordMap(false); //for labels and .eqv symbols
     private KeywordMap keywords;
     private int lastOffset;
     private int lastKeyword;
+    private boolean lastKeywordIsEqv = false;
 
     private void doKeyword(Segment line, int i, char c) {
         int i1 = i + 1;
 
         int len = i - lastKeyword;
         byte id = keywords.lookup(line, lastKeyword, len);
+        String keyword;
+        try {
+            keyword = line.toString().substring(lastKeyword - line.getBeginIndex(), i - line.getBeginIndex());
+        } catch (IndexOutOfBoundsException e) {
+            keyword = "";
+        }
         if (id == Token.NULL) {
-            id = labelKeywords.lookup(line, lastKeyword, len);
+            id = changingKeywords.lookup(line, lastKeyword, len);
+            if (id == Token.NULL && lastKeywordIsEqv) {
+                if (rars.assembler.TokenTypes.isValidIdentifier(keyword))
+                    changingKeywords.add(keyword, Token.SYMBOL);
+                lastKeywordIsEqv = false;
+            }
+        } else if (id == Token.KEYWORD2 && keyword.equals(".eqv")) {
+            lastKeywordIsEqv = true;
         }
         if (id != Token.NULL) {
             if (lastKeyword != lastOffset)
