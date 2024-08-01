@@ -118,6 +118,7 @@
 					<input>${project.basedir}/target</input>
 					<name>RARS</name>
 					<appVersion>1.6</appVersion>
+					<icon>${icon.path}</icon>
 					<vendor>Privat</vendor>
 					<mainClass>rars.Launch</mainClass>
 					<mainJar>
@@ -128,47 +129,58 @@
 				</configuration>
 
 				<executions>
-					<!-->MAC package<-->
 					<execution>
-						<id>mac</id>
+						<id>package-${os.family}</id>
 						<phase>package</phase>
 						<goals>
 							<goal>jpackage</goal>
 						</goals>
-						<configuration>
-							<icon>${project.basedir}/res/riscvColor.icns</icon>
-							<!--><description>RISC-V Assembler and Runtime Simulator</description><-->
-						</configuration>
-					</execution>
-
-					<!-->Windows package<-->
-					<execution>
-						<id>win</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jpackage</goal>
-						</goals>
-						<configuration>
-							<icon>${project.basedir}/res/riscvColor.ico</icon>
-						</configuration>
-					</execution>
-
-					<!-->Linux package<-->
-					<execution>
-						<id>linux</id>
-						<phase>package</phase>
-						<goals>
-							<goal>jpackage</goal>
-						</goals>
-						<configuration>
-							<icon>${project.basedir}/res/riscvColor.png</icon>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile> <!-->MacOs Profile<-->
+			<id>mac</id>
+			<activation>
+				<os>
+					<family>Mac</family>
+				</os>
+			</activation>
+			<properties>
+				<icon.path>${project.basedir}/res/riscvColor.icns</icon.path>
+				<os.family>Mac</os.family>
+			</properties>
+		</profile>
+		<profile> <!-->Windows Profile<-->
+			<id>windows</id>
+			<activation>
+				<os>
+					<family>Windows</family>
+				</os>
+			</activation>
+			<properties>
+				<icon.path>${project.basedir}/res/riscvColor.ico</icon.path>
+				<os.family>Windows</os.family>
+			</properties>
+		</profile>
+		<profile> <!-->Linux Profile<-->
+			<id>linux</id>
+			<activation>
+				<os>
+					<family>Unix</family>
+					<name>Linux</name>
+				</os>
+			</activation>
+			<properties>
+				<icon.path>${project.basedir}/res/riscvColor.png</icon.path>
+				<os.family>Linux</os.family>
+			</properties>
+		</profile>
+	</profiles>
+
 	<reporting>
 		<plugins>
 			<plugin>
