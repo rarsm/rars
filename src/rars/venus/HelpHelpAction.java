@@ -1,6 +1,7 @@
 package rars.venus;
 
 import rars.Globals;
+import rars.Settings;
 import rars.assembler.Directives;
 import rars.riscv.*;
 
@@ -66,9 +67,6 @@ public class HelpHelpAction extends GuiAction {
     private Dimension getSize() {
         return new Dimension(800, 600);
     }
-
-    // Light gray background color for alternating lines of the instruction lists
-    static Color altBackgroundColor = new Color(0xEE, 0xEE, 0xEE);
 
     /**
      * Separates Instruction name descriptor from detailed (operation) description
@@ -188,7 +186,11 @@ public class HelpHelpAction extends GuiAction {
     // Set up MIPS help tab.  Most contents are generated from instruction set info.
     private JPanel createHelpInfoPanel() {
         JPanel helpInfo = new JPanel(new BorderLayout());
-        String helpRemarksColor = "CCFF99";
+        String helpRemarksColor;
+        if (Globals.getSettings().getBooleanSetting(Settings.Bool.DARK_MODE_ENABLED))
+            helpRemarksColor = "006655";
+        else
+            helpRemarksColor = "CCFF99";
         // Introductory remarks go at the top as a label
         // TODO: update this to consider 12 and 20 bit numbers rather than 16
         String helpRemarks =
@@ -386,7 +388,7 @@ public class HelpHelpAction extends GuiAction {
                 setBackground(list.getSelectionBackground());
                 setForeground(list.getSelectionForeground());
             } else {
-                setBackground((index % 2 == 0) ? altBackgroundColor : list.getBackground());
+                setBackground((index % 2 == 0) ? Globals.getSettings().getColorSettingByPosition(Settings.EVEN_ROW_BACKGROUND) : list.getBackground());
                 setForeground(list.getForeground());
             }
             setEnabled(list.isEnabled());
