@@ -293,7 +293,8 @@ public class MessagesPane extends JPanel {
             Globals.getSettings().setBooleanSetting(Settings.Bool.POPUP_SYSCALL_INPUT, buttonPopup.isSelected());
             inputTabClearButton.setEnabled(false);
         }
-        this.repaint();
+        // Force the repaint and the application of the look-and-feel
+        SwingUtilities.updateComponentTreeUI(runioContent);
     }
 
     // Center given button in a box, centered vertically and 6 pixels on left and right

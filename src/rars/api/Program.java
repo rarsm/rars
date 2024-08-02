@@ -154,6 +154,10 @@ public class Program {
         }
     }
 
+    public RISCVprogram getCode() {
+        return code;
+    }
+
     /**
      * Simulates a processor executing the machine code.
      *
