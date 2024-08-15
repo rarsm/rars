@@ -125,7 +125,7 @@ public class HelpHelpAction extends GuiAction {
         JScrollPane copyrightScrollPane;
         JEditorPane copyrightDisplay;
         try {
-            StringBuilder text = loadFiletoStringBuilder("/License.txt").append("</pre>");
+            StringBuilder text = loadFiletoStringBuilder("/LICENSE").append("</pre>");
             copyrightDisplay = new JEditorPane("text/html", "<pre>" + text.toString());
             copyrightDisplay.setEditable(false);
             copyrightDisplay.setCaretPosition(0); // assure top of document displayed

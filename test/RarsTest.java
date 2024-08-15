@@ -56,7 +56,7 @@ public class RarsTest {
         // 32-bit tests
         Program p = setupProgram(false);
         runDirectory("./test", p);
-        runDirectory("./test/riscv-tests", p);
+        runDirectory("./test/riscv-tests-32", p);
 
         // 64-bit tests
         p = setupProgram(true);
