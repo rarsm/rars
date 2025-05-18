@@ -1,5 +1,37 @@
 package rars.venus;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.net.URL;
+import java.util.ArrayList;
+
+import javax.swing.Action;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+
 import rars.Globals;
 import rars.Settings;
 import rars.SimulationException;
@@ -8,18 +40,23 @@ import rars.riscv.dump.DumpFormatLoader;
 import rars.simulator.Simulator;
 import rars.simulator.SimulatorNotice;
 import rars.tools.ConversionTool;
+import rars.util.Indenter;
 import rars.venus.registers.ControlAndStatusWindow;
 import rars.venus.registers.FloatingPointWindow;
 import rars.venus.registers.RegistersPane;
 import rars.venus.registers.RegistersWindow;
-import rars.venus.run.*;
-import rars.venus.settings.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
-import java.util.ArrayList;
+import rars.venus.run.RunAssembleAction;
+import rars.venus.run.RunBackstepAction;
+import rars.venus.run.RunClearBreakpointsAction;
+import rars.venus.run.RunGoAction;
+import rars.venus.run.RunResetAction;
+import rars.venus.run.RunSpeedPanel;
+import rars.venus.run.RunStepAction;
+import rars.venus.settings.SettingsAction;
+import rars.venus.settings.SettingsEditorAction;
+import rars.venus.settings.SettingsExceptionHandlerAction;
+import rars.venus.settings.SettingsHighlightingAction;
+import rars.venus.settings.SettingsMemoryConfigurationAction;
 
 /**
  * Top level container for Venus GUI.
@@ -56,7 +93,7 @@ public class VenusUI extends JFrame {
     // components of the menubar
     private JMenu file, run, window, help, edit, settings;
     private JMenuItem fileNew, fileOpen, fileClose, fileCloseAll, fileSave, fileSaveAs, fileSaveAll, fileDumpMemory, fileExit;
-    private JMenuItem editUndo, editRedo, editCut, editCopy, editPaste, editFindReplace, editSelectAll;
+    private JMenuItem editUndo, editRedo, editCut, editCopy, editPaste, editFindReplace, editSelectAll, fileIndent;
     private JMenuItem runGo, runStep, runBackstep, runReset, runAssemble, runStop, runPause, runClearBreakpoints, runToggleBreakpoints;
     private JCheckBoxMenuItem settingsLabel, settingsValueDisplayBase, settingsAddressDisplayBase,
             settingsExtended, settingsAssembleOnOpen, settingsAssembleAll, settingsAssembleOpen, settingsWarningsAreErrors,
@@ -89,6 +126,8 @@ public class VenusUI extends JFrame {
             settingsSelfModifyingCodeAction, settingsRV64Action, settingsDeriveCurrentWorkingDirectoryAction, settingsDarkModeAction;
     private Action helpHelpAction, helpAboutAction;
 
+    // Nueva acción para el indentador
+    private Action fileIndentAction;
 
     /**
      * Constructor for the Class. Sets up a window object for the UI
@@ -461,6 +500,20 @@ public class VenusUI extends JFrame {
                     "Help", KeyEvent.VK_H, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), mainUI);
             helpAboutAction = new HelpAboutAction("About ...", null,
                     "Information about Rars", null, null, mainUI);
+
+            // Nueva acción para el indentador
+            fileIndentAction = new GuiAction("Indent Code", null,
+                    "Apply indentation to the current file", KeyEvent.VK_I, makeShortcut(KeyEvent.VK_I)) {
+                public void actionPerformed(ActionEvent e) {
+                    EditPane editPane = mainPane.getEditPane();
+                    if (editPane != null) {
+                        String currentContent = editPane.getSource();
+                        String indentedContent = Indenter.indentAssembly(currentContent);
+                        editPane.setSourceCode(indentedContent, true);
+                        editPane.setFileStatus(FileStatus.EDITED); // Marcar como editado
+                    }
+                }
+            };
         } catch (NullPointerException e) {
             System.out.println("Internal Error: images folder not found, or other null pointer exception while creating Action objects");
             e.printStackTrace();
@@ -505,6 +558,7 @@ public class VenusUI extends JFrame {
         fileSaveAll.setIcon(loadIcon("MyBlank16.gif"));
         fileDumpMemory = new JMenuItem(fileDumpMemoryAction);
         fileDumpMemory.setIcon(loadIcon("Dump16.png"));
+        fileIndent = new JMenuItem(fileIndentAction);   // Add new item for indenting
         fileExit = new JMenuItem(fileExitAction);
         fileExit.setIcon(loadIcon("MyBlank16.gif"));
         file.add(fileNew);
@@ -519,7 +573,13 @@ public class VenusUI extends JFrame {
             file.add(fileDumpMemory);
         }
         file.addSeparator();
+        file.add(fileIndent); 
+        file.addSeparator();
         file.add(fileExit);
+
+        
+       
+         
 
         editUndo = new JMenuItem(editUndoAction);
         editUndo.setIcon(loadIcon("Undo16.png"));//"Undo16.gif"));
