@@ -231,7 +231,7 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                 this.operands[this.numOperands++] = rounding_mode;
             } else if (tokenType == TokenTypes.IDENTIFIER) {
 
-                int address = this.sourceProgram.getLocalSymbolTable().getAddressLocalOrGlobal(tokenValue);
+                int address = this.sourceProgram.getLocalSymbolTable().getAddressLocalOrGlobal(tokenValue, token.getSourceLine());
                 if (address == SymbolTable.NOT_FOUND) { // symbol used without being defined
                     errors.add(new ErrorMessage(this.sourceProgram, token.getSourceLine(), token.getStartPos(),
                             "Symbol \"" + tokenValue + "\" not found in symbol table."));

@@ -108,9 +108,9 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
                 ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         contentPane.add(tableScroller);
 
-        setColumnMaxWidth(table.getColumnModel().getColumn(BREAK_COLUMN), columnNames[0]);
-        setColumnMaxWidth(table.getColumnModel().getColumn(ADDRESS_COLUMN), "0x00000000");
-        setColumnMaxWidth(table.getColumnModel().getColumn(CODE_COLUMN), "0x00000000");
+        setColumnMinWidth(table.getColumnModel().getColumn(BREAK_COLUMN), columnNames[0]);
+        setColumnMinWidth(table.getColumnModel().getColumn(ADDRESS_COLUMN), "0x00000000");
+        setColumnMinWidth(table.getColumnModel().getColumn(CODE_COLUMN), "0x00000000");
         table.getColumnModel().getColumn(BASIC_COLUMN).setPreferredWidth(160);
         table.getColumnModel().getColumn(SOURCE_COLUMN).setPreferredWidth(280);
 
@@ -180,14 +180,11 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
         return maxSourceLineNumber;
     }
 
-    /**
-     *
-     */
-    public void setColumnMaxWidth(TableColumn column, String referenceText) {
+    public void setColumnMinWidth(TableColumn column, String referenceText) {
         Component component = this; // column.getCellRenderer().getTableCellRendererComponent();
         FontMetrics fontMetrics = component.getFontMetrics(component.getFont());
         int width = fontMetrics.stringWidth(referenceText) + 10;
-        column.setMaxWidth(width);
+        column.setMinWidth(width);
         column.setPreferredWidth(width);
     }
 
@@ -733,7 +730,7 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
                     Globals.memory.setRawWord(address, val);
                 }
                 // somehow, user was able to display out-of-range address.  Most likely to occur between
-                // stack base and Kernel.  
+                // stack base and Kernel.
                 catch (AddressErrorException aee) {
                     return;
                 }
@@ -837,8 +834,8 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
             return cell;
         }
     }
-      
-   
+
+
    /*
    * Cell renderer for Breakpoint column.  We can use this to enable/disable breakpoint checkboxes with
    * a single action.  This class blatantly copied/pasted from

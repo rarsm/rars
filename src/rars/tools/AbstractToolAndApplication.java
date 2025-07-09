@@ -318,10 +318,8 @@ public abstract class AbstractToolAndApplication extends JFrame implements Tool,
                         if (mostRecentlyOpenedFile != null) {
                             fileChooser.setSelectedFile(mostRecentlyOpenedFile);
                         }
-                        // DPS 13 June 2007.  The next 4 lines add file filter to file chooser.
-                        FileFilter defaultFileFilter = FilenameFinder.getFileFilter(Globals.fileExtensions, "Assembler Files", true);
-                        fileChooser.addChoosableFileFilter(defaultFileFilter);
-                        fileChooser.addChoosableFileFilter(fileChooser.getAcceptAllFileFilter());
+
+                        FileFilter defaultFileFilter = FilenameFinder.getFileFilter(Globals.fileExtensions, "Assembly Files", true);
                         fileChooser.setFileFilter(defaultFileFilter);
 
                         if (fileChooser.showOpenDialog(that) == JFileChooser.APPROVE_OPTION) {
@@ -695,7 +693,7 @@ public abstract class AbstractToolAndApplication extends JFrame implements Tool,
             rars.Globals.program = program; // Shouldn't have to do this...
             String fileToAssemble = mostRecentlyOpenedFile.getPath();
             ArrayList<String> filesToAssemble;
-            if (multiFileAssemble) {// setting (check box in file open dialog) calls for multiple file assembly 
+            if (multiFileAssemble) {// setting (check box in file open dialog) calls for multiple file assembly
                 filesToAssemble = FilenameFinder.getFilenameList(
                         new File(fileToAssemble).getParent(), Globals.fileExtensions);
             } else {

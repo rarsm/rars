@@ -61,7 +61,8 @@ public class VenusUI extends JFrame {
     private JMenuItem runGo, runStep, runBackstep, runReset, runAssemble, runStop, runPause, runClearBreakpoints, runToggleBreakpoints;
     private JCheckBoxMenuItem settingsLabel, settingsValueDisplayBase, settingsAddressDisplayBase,
             settingsExtended, settingsAssembleOnOpen, settingsAssembleAll, settingsAssembleOpen, settingsWarningsAreErrors,
-            settingsStartAtMain, settingsSelfModifyingCode, settingsRV64, settingsDeriveCurrentWorkingDirectory, settingsDarkMode;
+            settingsStartAtMain, settingsSelfModifyingCode, settingsRV64, settingsDeriveCurrentWorkingDirectory, settingsDarkMode, 
+            settingsDisplayRegisterNumbers;
     private JMenuItem settingsExceptionHandler, settingsEditor, settingsHighlighting, settingsMemoryConfiguration;
     private JMenuItem helpHelp, helpAbout;
 
@@ -87,7 +88,8 @@ public class VenusUI extends JFrame {
             settingsExtendedAction, settingsAssembleOnOpenAction, settingsAssembleOpenAction, settingsAssembleAllAction,
             settingsWarningsAreErrorsAction, settingsStartAtMainAction,
             settingsExceptionHandlerAction, settingsEditorAction, settingsHighlightingAction, settingsMemoryConfigurationAction,
-            settingsSelfModifyingCodeAction, settingsRV64Action, settingsDeriveCurrentWorkingDirectoryAction, settingsDarkModeAction;
+            settingsSelfModifyingCodeAction, settingsRV64Action, settingsDeriveCurrentWorkingDirectoryAction, settingsDarkModeAction,
+            settingsDisplayRegisterNumbersAction;
     private Action helpHelpAction, helpAboutAction;
 
     // Nueva acción para el indentador
@@ -444,6 +446,8 @@ public class VenusUI extends JFrame {
                     Settings.Bool.DERIVE_CURRENT_WORKING_DIRECTORY);
             settingsDarkModeAction = new SettingsAction("Dark mode", "If set, RARS will be in dark mode at the next opening. Uncheck for light mode",
                     Settings.Bool.DARK_MODE_ENABLED);
+            settingsDisplayRegisterNumbersAction = new SettingsAction("Display Register Numbers", "Toggle display of register numbers in the Registers Tab",
+                    Settings.Bool.DISPLAY_REGISTER_NUMBERS);
 
             settingsEditorAction = new SettingsEditorAction("Editor...", null,
                     "View and modify text editor settings.", null, null
@@ -459,6 +463,7 @@ public class VenusUI extends JFrame {
                     null, "View and modify memory segment base addresses for the simulated processor",
                     null, null
             );
+            
 
             helpHelpAction = new HelpHelpAction("Help", loadIcon("Help22.png"),
                     "Help", KeyEvent.VK_H, KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), mainUI);
@@ -633,6 +638,8 @@ public class VenusUI extends JFrame {
                 }
             }
         });
+        settingsDisplayRegisterNumbers = new JCheckBoxMenuItem(settingsDisplayRegisterNumbersAction);
+        settingsDisplayRegisterNumbers.setSelected(Globals.getSettings().getBooleanSetting(Settings.Bool.DISPLAY_REGISTER_NUMBERS));
         settingsAssembleOnOpen = new JCheckBoxMenuItem(settingsAssembleOnOpenAction);
         settingsAssembleOnOpen.setSelected(Globals.getSettings().getBooleanSetting(Settings.Bool.ASSEMBLE_ON_OPEN));
         settingsAssembleAll = new JCheckBoxMenuItem(settingsAssembleAllAction);
@@ -664,6 +671,7 @@ public class VenusUI extends JFrame {
         settings.add(settingsRV64);
         settings.addSeparator();
         settings.add(settingsDarkMode);
+        settings.add(settingsDisplayRegisterNumbers);
         settings.add(settingsEditor);
         settings.add(settingsHighlighting);
         settings.add(settingsExceptionHandler);

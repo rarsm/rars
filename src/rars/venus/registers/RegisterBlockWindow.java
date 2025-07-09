@@ -17,6 +17,8 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.util.Arrays;
@@ -34,6 +36,7 @@ public abstract class RegisterBlockWindow extends JPanel implements Observer {
     private boolean highlighting;
     private RegistersAccessNotice stepAccessNotices;    //contains the register access notices for the current step
     private Register[] registers;
+    private TableColumn numberColumn;
 
     private static final int NAME_COLUMN = 0;
     private static final int NUMBER_COLUMN = 1;
@@ -67,6 +70,11 @@ public abstract class RegisterBlockWindow extends JPanel implements Observer {
         table.setPreferredScrollableViewportSize(new Dimension(200, 700));
         this.setLayout(new BorderLayout());  // table display will occupy entire width if widened
         this.add(new JScrollPane(table, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
+
+        // Copy numbers column
+        numberColumn = table.getColumnModel().getColumn(NUMBER_COLUMN);
+        // Hide number column if user preference is to not display them
+        updateNumbersColumn();
     }
 
     protected abstract String formatRegister(Register value, int base);
@@ -184,6 +192,7 @@ public abstract class RegisterBlockWindow extends JPanel implements Observer {
                 endObserving();
             }
         } else if (observable == settings) {
+            updateNumbersColumn();
             updateRowHeight();
         } else if (obj instanceof RegisterAccessNotice) {
             // NOTE: each register is a separate Observable
@@ -193,6 +202,20 @@ public abstract class RegisterBlockWindow extends JPanel implements Observer {
             this.highlighting = true;
             addRegisterHighlighting((Register) observable, access.getAccessType());
             Globals.getGui().getRegistersPane().setSelectedComponent(this);
+        }
+    }
+
+    /**
+     * Updates the width of the number column based on the user's preference.
+     * 
+     * Triggers on settings change.
+     */
+    private void updateNumbersColumn() {
+        if (!settings.getBooleanSetting(Settings.Bool.DISPLAY_REGISTER_NUMBERS)) {
+            table.getColumnModel().removeColumn(numberColumn);
+        } else if (table.getColumnModel().getColumn(NUMBER_COLUMN) != numberColumn) {
+            table.getColumnModel().addColumn(numberColumn);
+            table.getColumnModel().moveColumn(2, 1);
         }
     }
 
@@ -361,13 +384,14 @@ public abstract class RegisterBlockWindow extends JPanel implements Observer {
             int rowIndex = rowAtPoint(p);
             int colIndex = columnAtPoint(p);
             int realColumnIndex = convertColumnIndexToModel(colIndex);
-            if (realColumnIndex == NAME_COLUMN) { //Register name column
-                return regToolTips[rowIndex];
-            } else {
-                //You can omit this part if you know you don't have any
-                //renderers that supply their own tool tips.
-                return super.getToolTipText(e);
-            }
+            switch (realColumnIndex) {
+            	case NAME_COLUMN:  return regToolTips[rowIndex];
+            	case VALUE_COLUMN: return formatRegister(registers[rowIndex], NumberDisplayBaseChooser.DECIMAL);
+            	default:
+            		//You can omit this part if you know you don't have any
+	                //renderers that supply their own tool tips.
+	                return super.getToolTipText(e);
+	        }
         }
 
         private String[] columnToolTips;

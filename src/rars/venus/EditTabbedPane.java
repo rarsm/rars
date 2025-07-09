@@ -329,6 +329,9 @@ public class EditTabbedPane extends JTabbedPane {
                 // end of 13-July-2011 code.
                 saveDialog.setDialogTitle("Save As");
 
+                FileFilter defaultFileFilter = FilenameFinder.getFileFilter(Globals.fileExtensions, "Assembly Files", true);
+                saveDialog.setFileFilter(defaultFileFilter);
+
                 int decision = saveDialog.showSaveDialog(mainUI);
                 if (decision != JFileChooser.APPROVE_OPTION) {
                     return null;
@@ -354,7 +357,7 @@ public class EditTabbedPane extends JTabbedPane {
                     }
                 }
             }
-            // Either file with selected name does not exist or user wants to 
+            // Either file with selected name does not exist or user wants to
             // overwrite it, so go for it!
             try {
                 BufferedWriter outFileStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(theFile), "UTF-8"));
@@ -562,7 +565,7 @@ public class EditTabbedPane extends JTabbedPane {
             }
             return true;
         }
-      
+
        /*
         * Open the specified file.  Return true if file opened, false otherwise
         */

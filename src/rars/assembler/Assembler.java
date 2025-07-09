@@ -575,7 +575,8 @@ public class Assembler {
         // 2-July-2010. DPS. Remove prohibition of operator names as labels
         if (tokens.size() < 2)
             return false;
-        return (tokens.get(0).getType() == TokenTypes.IDENTIFIER || tokens.get(0).getType() == TokenTypes.OPERATOR)
+        TokenTypes type0 = tokens.get(0).getType();
+        return (type0 == TokenTypes.IDENTIFIER || type0 == TokenTypes.OPERATOR || type0 == TokenTypes.INTEGER_5)
                 && tokens.get(1).getType() == TokenTypes.COLON;
     }
 
@@ -1002,7 +1003,7 @@ public class Assembler {
         else if (token.getType() == TokenTypes.IDENTIFIER) {
             if (this.inDataSegment) {
                 int value = fileCurrentlyBeingAssembled.getLocalSymbolTable()
-                        .getAddressLocalOrGlobal(token.getValue());
+                        .getAddressLocalOrGlobal(token.getValue(), token.getSourceLine());
                 if (value == SymbolTable.NOT_FOUND) {
                     // Record value 0 for now, then set up backpatch entry
                     int dataAddress = writeToDataSegment(0, lengthInBytes, token, errors);
@@ -1327,7 +1328,7 @@ public class Assembler {
             DataSegmentForwardReference entry;
             for (int i = 0; i < forwardReferenceList.size(); i++) {
                 entry = forwardReferenceList.get(i);
-                labelAddress = localSymtab.getAddressLocalOrGlobal(entry.token.getValue());
+                labelAddress = localSymtab.getAddressLocalOrGlobal(entry.token.getValue(), entry.token.getSourceLine());
                 if (labelAddress != SymbolTable.NOT_FOUND) {
                     // patch address has to be valid b/c we already stored there...
                     try {

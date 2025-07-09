@@ -134,7 +134,11 @@ public class Settings extends Observable {
         /**
          * Flag to determine whether rars is in dark mode instead of light mode.
          */
-        DARK_MODE_ENABLED("DarkModeEnabled", false);
+        DARK_MODE_ENABLED("DarkModeEnabled", false),
+        /**
+         * Flag to determine whether or not the register numbers are displayed.
+         */
+        DISPLAY_REGISTER_NUMBERS("DisplayRegisterNumbers", true);
 
         // TODO: add option for turning off user trap handling and interrupts
         private String name;

@@ -44,10 +44,10 @@ public class SymbolTable {
 
     public void addSymbol(Token token, int address, boolean b, ErrorList errors) {
         String label = token.getValue();
-        if (getSymbol(label) != null) {
+        if (getSymbol(label) != null && !Character.isDigit(label.charAt(0))) {
             errors.add(new ErrorMessage(token.getSourceProgram(), token.getSourceLine(), token.getStartPos(), "label \"" + label + "\" already defined"));
         } else {
-            table.add(new Symbol(label, address, b));
+            table.add(new Symbol(label, address, b, token.getSourceLine()));
             if (Globals.debug)
                 System.out.println("The symbol " + label + " with address " + address + " has been added to the " + this.filename + " symbol table.");
         }
@@ -90,6 +90,23 @@ public class SymbolTable {
         return NOT_FOUND;
     }
 
+    public int getLocalAddress(String s, int sourceLine) {
+        if (s.length() == 2 && Character.isDigit(s.charAt(0))) {
+            String label = s.substring(0, 1);
+            var matching = table.stream()
+                .filter(sym -> sym.getName().equals(label))
+                .sorted((a, b) -> Integer.compare(a.getSourceLine(), b.getSourceLine()));
+            if (s.charAt(1) == 'f') {
+                return matching.filter(sym -> sym.getSourceLine() > sourceLine)
+                    .findFirst().map(Symbol::getAddress).orElse(NOT_FOUND);
+            } else {
+                return matching.filter(sym -> sym.getSourceLine() <= sourceLine)
+                    .reduce((first, last) -> last).map(Symbol::getAddress).orElse(NOT_FOUND);
+            }
+        }
+        return getAddress(s);
+    }
+
     /**
      * Method to return the address associated with the given label.  Look first
      * in this (local) symbol table then in symbol table of labels declared
@@ -98,8 +115,8 @@ public class SymbolTable {
      * @param s The label.
      * @return The memory address of the label given, or NOT_FOUND if not found in symbol table.
      **/
-    public int getAddressLocalOrGlobal(String s) {
-        int address = this.getAddress(s);
+    public int getAddressLocalOrGlobal(String s, int sourceLine) {
+        int address = this.getLocalAddress(s, sourceLine);
         return (address == NOT_FOUND) ? Globals.symbolTable.getAddress(s) : address;
     }
 

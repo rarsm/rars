@@ -11,6 +11,7 @@ public class Symbol {
     private String name;
     private int address;
     private boolean data; // boolean true if data symbol false if text symbol.
+    private int sourceLine;
 
     /**
      * Basic constructor, creates a symbol object.
@@ -20,10 +21,11 @@ public class Symbol {
      * @param data    true if it represents data, false if code.
      **/
 
-    public Symbol(String name, int address, boolean data) {
+    public Symbol(String name, int address, boolean data, int sourceLine) {
         this.name = name;
         this.address = address;
         this.data = data;
+        this.sourceLine = sourceLine;
     }
 
     /**
@@ -54,6 +56,11 @@ public class Symbol {
 
     public boolean getType() {
         return this.data;
+    }
+
+
+    public int getSourceLine() {
+        return this.sourceLine;
     }
 
 

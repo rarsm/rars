@@ -151,6 +151,11 @@ public enum TokenTypes {
             // NO ACTION -- exception suppressed
         }
 
+        // See if it is a local label reference like 1b or 2f
+        if (value.length() == 2 && Character.isDigit(value.charAt(0)) &&
+                (value.charAt(1) == 'f' || value.charAt(1) == 'b'))
+            return TokenTypes.IDENTIFIER;
+
         // See if it is a real (fixed or floating point) number.  Note that parseDouble()
         // accepts integer values but if it were an integer literal we wouldn't get this far.
         if (value.equals("Inf") || value.equals("NaN")) return TokenTypes.REAL_NUMBER;
@@ -179,7 +184,7 @@ public enum TokenTypes {
             return TokenTypes.OPERATOR;
 
         // Test for identifier goes last because I have defined tokens for various
-        // MIPS constructs (such as operators and directives) that also could fit
+        // constructs (such as operators and directives) that also could fit
         // the lexical specifications of an identifier, and those need to be
         // recognized first.
         if (isValidIdentifier(value))
@@ -190,7 +195,7 @@ public enum TokenTypes {
     }
 
     /**
-     * Lets you know if given tokentype is for integers (INTGER_5, INTEGER_16, INTEGER_32).
+     * Lets you know if given tokentype is for integers (INTEGER_5, INTEGER_16, INTEGER_32).
      *
      * @param type the TokenType of interest
      * @return true if type is an integer type, false otherwise.
