@@ -6,7 +6,6 @@ import rars.Settings;
 import rars.SimulationException;
 import rars.riscv.Instruction;
 import rars.riscv.InstructionSet;
-import rars.util.Binary;
 
 import java.util.Collection;
 import java.util.Observable;
@@ -190,6 +189,10 @@ public class Memory extends Observable {
     // always returns this instance.
 
     private static Memory uniqueMemoryInstance = new Memory();
+
+    // Pointer for when the main option is enabled, allowing the user to ret to an injected
+    // text segment that allows us to exit properly like a real executable would
+    public static int addressEndOfTextSegment;
 
 
     /*

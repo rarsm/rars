@@ -169,6 +169,8 @@ public class RegisterFile {
         int mainAddr = Globals.symbolTable.getAddress(SymbolTable.getStartLabel());
         if (startAtMain && mainAddr != SymbolTable.NOT_FOUND && Memory.inTextSegment(mainAddr)) {
             initializeProgramCounter(mainAddr);
+            // Make the main function return to a text segment that contains "li a7, 10; ecall"
+            updateRegister(1, Memory.addressEndOfTextSegment);
         } else {
             initializeProgramCounter((int)programCounter.getResetValue());
         }
