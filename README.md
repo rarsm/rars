@@ -21,7 +21,9 @@ RARSM includes the following features:
 ### Screenshots
 Below are some screenshots showcasing the RARSM interface and features:
 
-*(Add screenshots here)*
+![Screenshot 1](res/Screenshot-1.png)
+![Screenshot 2](res/Screenshot-2.png)
+![Screenshot 3](res/Screenshot-3.png)
 
 ## How to Install
 
