@@ -117,9 +117,9 @@
 				<configuration>
 					<input>${project.basedir}/target</input>
 					<name>RARS</name>
-					<appVersion>1.6</appVersion>
+					<appVersion>${app.version}</appVersion>
 					<icon>${icon.path}</icon>
-					<vendor>Privat</vendor>
+					<vendor>RARSM</vendor>
 					<mainClass>rars.Launch</mainClass>
 					<mainJar>
 						${project.build.finalName}-jar-with-dependencies.jar
@@ -135,6 +135,27 @@
 						<goals>
 							<goal>jpackage</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<?m2e execute onConfiguration?>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo file="src/Version.properties" append="false">
+									Version = ${app.version}
+								</echo>
+							</target>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -191,6 +212,7 @@
 		</plugins>
 	</reporting>
 	<properties>
+		<app.version>1.7</app.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.release>11</maven.compiler.release>
