@@ -239,6 +239,15 @@ public class ProgramStatement implements Comparable<ProgramStatement> {
                 }
                 boolean absoluteAddress = true; // (used below)
 
+                if (i + 2 < strippedTokenList.size()) { // support label+integer
+                    Token op = strippedTokenList.get(i + 1);
+                    Token offset = strippedTokenList.get(i + 2);
+                    if (op.getType() == TokenTypes.PLUS && TokenTypes.isIntegerTokenType(offset.getType())) {
+                        address = address + Integer.parseInt(offset.getValue());
+                        i = i + 2;
+                    }
+                }
+
                 if (instruction instanceof BasicInstruction) {
                     BasicInstructionFormat format = ((BasicInstruction) instruction).getInstructionFormat();
                     if (format == BasicInstructionFormat.B_FORMAT) {

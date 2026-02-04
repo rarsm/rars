@@ -51,11 +51,22 @@ public class OperandFormat {
     private static boolean numOperandsCheck(TokenList cand, Instruction spec, ErrorList errors) {
         int numOperands = cand.size() - 1;
         int reqNumOperands = spec.getTokenList().size() - 1;
+        int i = 1;
+        while (i < cand.size()) {  // support labal+integer, count these 3 tokens as 1
+            if (cand.get(i).getType() == TokenTypes.IDENTIFIER && i + 2 < cand.size()) {
+                Token op = cand.get(i + 1);
+                Token offset = cand.get(i + 2);
+                if (op.getType() == TokenTypes.PLUS && TokenTypes.isIntegerTokenType(offset.getType())) {
+                    numOperands = numOperands - (3 - 1);
+                    i = i + 2; // skip the next two tokens
+                }
+            }
+            i = i + 1;
+        }
         Token operator = cand.get(0);
         if (numOperands == reqNumOperands) {
             return true;
         } else if (numOperands < reqNumOperands) {
-
             String mess = "Too few or incorrectly formatted operands. Expected: " + spec.getExampleFormat();
             generateMessage(operator, mess, errors);
         } else {
