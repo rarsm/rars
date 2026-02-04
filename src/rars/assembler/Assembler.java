@@ -916,7 +916,7 @@ public class Assembler {
                 }
                 for (int i = 0; i < repetitions; i++) {
                     if (Directives.isIntegerDirective(directive)) {
-                        storeInteger(valueToken, directive, errors);
+                        storeInteger(valueToken, directive, 0, errors);
                     } else {
                         storeRealNumber(valueToken, directive, errors);
                     }
@@ -928,10 +928,24 @@ public class Assembler {
         // if not in ".word w : n" format, must just be list of one or more values.
         for (int i = tokenStart; i < tokens.size(); i++) {
             token = tokens.get(i);
+            int offset = 0;
+            while (i + 2 < tokens.size()  // support for label+integer
+                    && tokens.get(i+1).getType() == TokenTypes.PLUS) {
+                Token offsetToken = tokens.get(i+2);
+                if (TokenTypes.isIntegerTokenType(offsetToken.getType())) {
+                    offset = offset + Integer.parseInt(offsetToken.getValue());
+                } else {
+                    errors.add(new ErrorMessage(fileCurrentlyBeingAssembled, offsetToken.getSourceLine(), offsetToken.getStartPos(), "Only integers can be used as offsets"));
+                }
+                i = i + 2;
+            }
             if (Directives.isIntegerDirective(directive)) {
-                storeInteger(token, directive, errors);
+                storeInteger(token, directive, offset, errors);
             }
             if (Directives.isFloatingDirective(directive)) {
+                if (offset != 0) {
+                    errors.add(new ErrorMessage(fileCurrentlyBeingAssembled, token.getSourceLine(), token.getStartPos(), "Offsets are not supported for floating point values"));
+                }
                 storeRealNumber(token, directive, errors);
             }
         }
@@ -942,13 +956,13 @@ public class Assembler {
     // Called by storeNumeric()
     // NOTE: The token itself may be a label, in which case the correct action is
     // to store the address of that label (into however many bytes specified).
-    private void storeInteger(Token token, Directives directive, ErrorList errors) {
+    private void storeInteger(Token token, Directives directive, int offset, ErrorList errors) {
         int lengthInBytes = DataTypes.getLengthInBytes(directive);
         if (TokenTypes.isIntegerTokenType(token.getType())) {
             int value;
             long longvalue;
             if (TokenTypes.INTEGER_64 == token.getType()) {
-                longvalue = Binary.stringToLong(token.getValue());
+                longvalue = Binary.stringToLong(token.getValue()) + offset;
                 value = (int)longvalue;
                 if (directive != Directives.DWORD){
                     errors.add(new ErrorMessage(ErrorMessage.WARNING, token.getSourceProgram(), token.getSourceLine(),
@@ -956,7 +970,7 @@ public class Assembler {
                             + " is out-of-range and truncated to " + Binary.intToHexString(value)));
                 }
             }else{
-                value = Binary.stringToInt(token.getValue());
+                value = Binary.stringToInt(token.getValue()) + offset;
                 longvalue = value;
             }
 
@@ -1019,9 +1033,9 @@ public class Assembler {
                 if (value == SymbolTable.NOT_FOUND) {
                     // Record value 0 for now, then set up backpatch entry
                     int dataAddress = writeToDataSegment(0, lengthInBytes, token, errors);
-                    currentFileDataSegmentForwardReferences.add(dataAddress, lengthInBytes, token);
+                    currentFileDataSegmentForwardReferences.add(dataAddress, lengthInBytes, token, offset);
                 } else { // label already defined, so write its address
-                    writeToDataSegment(value, lengthInBytes, token, errors);
+                    writeToDataSegment(value + offset, lengthInBytes, token, errors);
                 }
             } // Data segment check done previously, so this "else" will not be.
             // See 11/20/06 note above.
@@ -1312,8 +1326,8 @@ public class Assembler {
         // - memory address to receive the label's address once resolved
         // - number of address bytes to store (1 for .byte, 2 for .half, 4 for .word)
         // - the label's token. All its information will be needed if error message generated.
-        private void add(int patchAddress, int length, Token token) {
-            forwardReferenceList.add(new DataSegmentForwardReference(patchAddress, length, token));
+        private void add(int patchAddress, int length, Token token, int offset) {
+            forwardReferenceList.add(new DataSegmentForwardReference(patchAddress, length, token, offset));
         }
 
         // Add the entries of another DataSegmentForwardReferences object to this one.
@@ -1344,7 +1358,7 @@ public class Assembler {
                 if (labelAddress != SymbolTable.NOT_FOUND) {
                     // patch address has to be valid b/c we already stored there...
                     try {
-                        Globals.memory.set(entry.patchAddress, labelAddress, entry.length);
+                        Globals.memory.set(entry.patchAddress, labelAddress + entry.offset, entry.length);
                     } catch (AddressErrorException aee) {
                     }
                     forwardReferenceList.remove(i);
@@ -1368,11 +1382,13 @@ public class Assembler {
             int patchAddress;
             int length;
             Token token;
+            int offset;
 
-            DataSegmentForwardReference(int patchAddress, int length, Token token) {
+            DataSegmentForwardReference(int patchAddress, int length, Token token, int offset) {
                 this.patchAddress = patchAddress;
                 this.length = length;
                 this.token = token;
+                this.offset = offset;
             }
         }
 
