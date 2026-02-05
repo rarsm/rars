@@ -25,7 +25,9 @@ public final class Directives {
     public static final Directives BYTE = new Directives(".byte", "Store the listed value(s) as 8 bit bytes");
     public static final Directives ALIGN = new Directives(".align", "Align next data item on specified byte boundary (0=byte, 1=half, 2=word, 3=double)");
     public static final Directives HALF = new Directives(".half", "Store the listed value(s) as 16 bit halfwords on halfword boundary");
-    public static final Directives SPACE = new Directives(".space", "Reserve the next specified number of bytes in Data segment");
+    public static final Directives SPACE = new Directives(".space", "Reserve the next specified number of bytes in Data segment, initialized to 0");
+    public static final Directives ZERO = new Directives(".zero", "Reserve the next specified number of bytes in Data segment, initialized to 0");
+    public static final Directives SKIP = new Directives(".skip", "Reserve the next specified number of bytes in Data segment, initialized to 0");
     public static final Directives DOUBLE = new Directives(".double", "Store the listed value(s) as double precision floating point");
     public static final Directives FLOAT = new Directives(".float", "Store the listed value(s) as single precision floating point");
     public static final Directives EXTERN = new Directives(".extern", "Declare the listed label and byte length to be a global data field");
