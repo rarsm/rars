@@ -70,7 +70,7 @@ public class MessagesPane extends JPanel {
         // pane, will make messages more readable.  For run
         // pane, will allow properly aligned "text graphics"
         // DPS 15 Dec 2008
-        Font monoFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        Font monoFont = Globals.getSettings().getFontByPosition(Settings.MESSAGE_PANE_FONT);
         assemble.setFont(monoFont);
         run.setFont(monoFont);
         input.setFont(monoFont);
