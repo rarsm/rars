@@ -42,7 +42,7 @@ public class SettingsFontsAction extends GuiAction {
     private static final int[] fontSettingPositions = {
         Settings.EDITOR_FONT,
         Settings.MESSAGE_PANE_FONT,
-        rowsFontSettingPositions[0] // can be any in fontSettingPositions because 
+        rowsFontSettingPositions[0] // can be any in rowsFontSettingPositions because
         // we are always changing all the fonts together
     };
 
@@ -55,7 +55,7 @@ public class SettingsFontsAction extends GuiAction {
 
     private static final int gridVGap = 2;
     private static final int gridHGap = 2;
-    // Tool tips for color buttons
+    // Tool tips for font buttons
     private static final String SAMPLE_TOOL_TIP_TEXT = "Preview based on font settings";
     private static final String FONT_TOOL_TIP_TEXT = "Click, to select text font";
     private static final String DEFAULT_TOOL_TIP_TEXT = "Check, to select default font (disables font select buttons)";
@@ -122,7 +122,7 @@ public class SettingsFontsAction extends GuiAction {
             defaultCheckBoxes[i].setToolTipText(DEFAULT_TOOL_TIP_TEXT);
         }
 
-        initializeButtonColors();
+        initializeButtonFonts();
 
         for (int i = 0; i < numberOfRows; i++) {
             patches.add(fontButtons[i]);
@@ -221,7 +221,7 @@ public class SettingsFontsAction extends GuiAction {
     }
 
     // Called once, upon dialog setup.
-    private void initializeButtonColors() {
+    private void initializeButtonFonts() {
         Settings settings = Globals.getSettings();
         LineBorder lineBorder = new LineBorder(Color.BLACK);
         Font fontSetting;
