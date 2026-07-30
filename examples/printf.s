@@ -1,5 +1,8 @@
+.include "printstr.s"
+.include "printnum.s"
+
 .globl printf
-.text
+#.text
 # input: a0 = template string, a1-a7=arguments in order for that template
 # no output
 printf:
@@ -29,14 +32,14 @@ printf:
 	mv s7, a7
 
 	# loop through the template until we hit a %
-loop:
+printf_loop:
 	lb t1, 0(t0)
-	beqz t1, done
+	beqz t1, printf_done
 	li t2, 0x25 # %
-	beq t1, t2, outputArg
+	beq t1, t2, printf_outputArg
 	addi t0, t0, 1
-	j loop
-outputArg:
+	j printf_loop
+printf_outputArg:
 
 	# Print out all of the characters we have interated over thus far
 	# Write (64) from a0-t0 to stdout (1)
@@ -51,28 +54,28 @@ outputArg:
 
 	lb t0, -1(s0)
 	li t1, 0x64 # 'd'
-	beq t0, t1,  outputNum
+	beq t0, t1,  printf_outputNum
 	li t1, 0x78 # 'x'
-	beq t0, t1, outputHex
+	beq t0, t1, printf_outputHex
 	li t1, 0x73 # 's'
-	beq t0, t1, outputStr
+	beq t0, t1, printf_outputStr
 	# Exit if the character following if not d or x
 	mv t0, s0
-	j done
-outputStr:
+	j printf_done
+printf_outputStr:
 	mv a0, s1
 	call printStr
-	j noOutput
-outputHex:
+	j printf_noOutput
+printf_outputHex:
 	mv a0, s1
 	call printHex
-	j noOutput
-outputNum:
+	j printf_noOutput
+printf_outputNum:
         mv a0, s1
         call printDec
 
 
-noOutput:
+printf_noOutput:
 	# Shift arguments down 
 	mv s1, s2
 	mv s2, s3
@@ -84,8 +87,8 @@ noOutput:
 	# Reinit t0	
 	mv t0, s0
 
-	j loop
-done:
+	j printf_loop
+printf_done:
 	# Print out the characters till the end
 	# Write (64) from the buffer to stdout (1)
         li a0, 1

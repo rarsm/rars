@@ -1,6 +1,7 @@
 package rars.api;
 
 import rars.*;
+import rars.assembler.SourceLine;
 import rars.riscv.hardware.*;
 import rars.simulator.ProgramArgumentList;
 import rars.simulator.Simulator;
@@ -10,6 +11,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * <p>
@@ -103,7 +105,7 @@ public class Program {
     public ErrorList assembleString(String source) throws AssemblyException {
         ArrayList<RISCVprogram> programs = new ArrayList<>();
         code.fromString(source);
-        code.tokenize();
+        code.tokenize(new HashMap<String, ArrayList<SourceLine>>());
         programs.add(code);
         return assemble(programs);
     }

@@ -13,28 +13,28 @@ temp:
 printDec:
     	# t0 = abs(a0);
         mv t0, a0
-        bgez t0, positive
+        bgez t0, printnum_positive
 	xori t0, t0, -1
 	addi t0, t0, 1
-positive:      
+printnum_positive:      
 
         # convert t0 to digits in the buffer
         la a1, temp
         li t2, 10
-decLoop:
+printnum_decLoop:
         rem t3, t0, t2
         div t0, t0, t2 
         addi t3, t3, 0x30 # += '0'; converts a numerical 0-9 to the characters '0'-'9'
         addi a1, a1, -1
         sb t3, 0(a1)
-        bnez t0, decLoop
+        bnez t0, printnum_decLoop
         
         # Add a negative sign if it was negative
-        bgez a0, notNegative
+        bgez a0, printnum_notNegative
         li t3, 0x2D # '-'
         addi a1, a1, -1
         sb t3, 0(a1)
-notNegative:
+printnum_notNegative:
 	
 	# Write (64) from the temporary buffer to stdout (1) 
 	li a0, 1
@@ -49,16 +49,16 @@ printHex:
         # convert t0 to digits in the buffer
         la a1, temp
         li t2, 10
-hexLoop:
+printnum_hexLoop:
         andi t3, a0, 0xF
         srli a0, a0, 4 
-	blt t3, t2, offset
+	blt t3, t2, printnum_offset
 	addi t3, t3, 7 # += 'A' - '0' - 10; preps a numerical 10-15 to be converted to the characters 'A'-'F'
-offset:	
+printnum_offset:	
         addi t3, t3, 0x30 # += '0'; converts a numerical 0-9 to the characters '0'-'9'
         addi a1, a1, -1
 	sb t3, 0(a1)
-        bnez a0, hexLoop
+        bnez a0, printnum_hexLoop
 
 	# Add the 0x to the funct	
 	addi a1, a1, -2

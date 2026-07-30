@@ -5,9 +5,12 @@ import rars.riscv.hardware.RegisterFile;
 import rars.simulator.BackStepper;
 import rars.simulator.Simulator;
 
+import javax.xml.transform.Source;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Internal representations of the program.  Connects source, tokens and machine code.  Having
@@ -243,9 +246,9 @@ public class RISCVprogram {
      * @throws AssemblyException Will throw exception if errors occurred while tokenizing.
      **/
 
-    public void tokenize() throws AssemblyException {
+    public void tokenize(HashMap<String, ArrayList<SourceLine>> IncludedFiles) throws AssemblyException {
         this.tokenizer = new Tokenizer();
-        this.tokenList = tokenizer.tokenize(this);
+        this.tokenList = tokenizer.tokenize(this, IncludedFiles);
         this.localSymbolTable = new SymbolTable(this.filename); // prepare for assembly
     }
 
@@ -267,6 +270,7 @@ public class RISCVprogram {
 
     public ArrayList<RISCVprogram> prepareFilesForAssembly(ArrayList<String> filenames, String leadFilename, String exceptionHandler) throws AssemblyException {
         ArrayList<RISCVprogram> programsToAssemble = new ArrayList<>();
+        HashMap<String, ArrayList<SourceLine>> IncludedFiles = new HashMap<>();
         int leadFilePosition = 0;
         if (exceptionHandler != null && exceptionHandler.length() > 0) {
             filenames.add(0, exceptionHandler);
@@ -275,7 +279,7 @@ public class RISCVprogram {
         for (String filename : filenames) {
             RISCVprogram preparee = (filename.equals(leadFilename)) ? this : new RISCVprogram();
             preparee.readSource(filename);
-            preparee.tokenize();
+            preparee.tokenize(IncludedFiles);
             // I want "this" RISCVprogram to be the first in the list...except for exception handler
             if (preparee == this && programsToAssemble.size() > 0) {
                 programsToAssemble.add(leadFilePosition, preparee);
@@ -283,6 +287,17 @@ public class RISCVprogram {
                 programsToAssemble.add(preparee);
             }
         }
+        for (Map.Entry<String, ArrayList<SourceLine>> entry : IncludedFiles.entrySet()) {
+            String filename = entry.getKey();
+            boolean present = !programsToAssemble.stream()
+                    .noneMatch(p -> p.getFilename().equals(filename));
+            if (present) continue;
+            RISCVprogram preparee = new RISCVprogram();
+            preparee.readSource(filename);
+            preparee.tokenize(IncludedFiles);
+            programsToAssemble.add(preparee);
+        }
+
         return programsToAssemble;
     }
 

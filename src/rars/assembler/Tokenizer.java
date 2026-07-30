@@ -2,6 +2,7 @@ package rars.assembler;
 
 import rars.*;
 
+import javax.xml.transform.Source;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,12 +61,12 @@ public class Tokenizer {
      * that represents a tokenized source statement from the program.
      **/
 
-    public ArrayList<TokenList> tokenize(RISCVprogram p) throws AssemblyException {
+    public ArrayList<TokenList> tokenize(RISCVprogram p, HashMap<String, ArrayList<SourceLine>> IncludedFiles) throws AssemblyException {
         sourceRISCVprogram = p;
         equivalents = new HashMap<>(); // DPS 11-July-2012
         ArrayList<TokenList> tokenList = new ArrayList<>();
         //ArrayList source = p.getSourceList();
-        ArrayList<SourceLine> source = processIncludes(p, new HashMap<>()); // DPS 9-Jan-2013
+        ArrayList<SourceLine> source = processIncludes(p, IncludedFiles); // DPS 9-Jan-2013
         p.setSourceLineList(source);
         TokenList currentLineTokens;
         String sourceLine;
@@ -96,9 +97,15 @@ public class Tokenizer {
     // files that themselves have .include.  Plus it will detect and report recursive
     // includes both direct and indirect.
     // DPS 11-Jan-2013
-    private ArrayList<SourceLine> processIncludes(RISCVprogram program, Map<String, String> inclFiles) throws AssemblyException {
+    private ArrayList<SourceLine> processIncludes(RISCVprogram program, Map<String, ArrayList<SourceLine>> inclFiles) throws AssemblyException {
         ArrayList<String> source = program.getSourceList();
         ArrayList<SourceLine> result = new ArrayList<>(source.size());
+        String filename = program.getFilename();
+        if (!inclFiles.containsKey(filename)) {
+            inclFiles.put(filename, result);
+        } else {
+            return inclFiles.get(filename);
+        }
         for (int i = 0; i < source.size(); i++) {
             String line = source.get(i);
             TokenList tl = tokenizeLine(program, i + 1, line, false);
@@ -107,12 +114,13 @@ public class Tokenizer {
                 if (tl.get(ii).getValue().equalsIgnoreCase(Directives.INCLUDE.getName())
                         && (tl.size() > ii + 1)
                         && tl.get(ii + 1).getType() == TokenTypes.QUOTED_STRING) {
-                    String filename = tl.get(ii + 1).getValue();
+                    filename = tl.get(ii + 1).getValue();
                     filename = filename.substring(1, filename.length() - 1); // get rid of quotes
                     // Handle either absolute or relative pathname for .include file
                     if (!new File(filename).isAbsolute()) {
                         filename = new File(program.getFilename()).getParent() + File.separator + filename;
                     }
+                    /*
                     if (inclFiles.containsKey(filename)) {
                         // This is a recursive include.  Generate error message and return immediately.
                         Token t = tl.get(ii + 1);
@@ -120,7 +128,7 @@ public class Tokenizer {
                                 "Recursive include of file " + filename));
                         throw new AssemblyException(errors);
                     }
-                    inclFiles.put(filename, filename);
+                    */
                     RISCVprogram incl = new RISCVprogram();
                     try {
                         incl.readSource(filename);
@@ -131,7 +139,7 @@ public class Tokenizer {
                         throw new AssemblyException(errors);
                     }
                     ArrayList<SourceLine> allLines = processIncludes(incl, inclFiles);
-                    result.addAll(allLines);
+                    //result.addAll(allLines);
                     hasInclude = true;
                     break;
                 }

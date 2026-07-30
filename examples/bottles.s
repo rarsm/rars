@@ -1,3 +1,4 @@
+.include "printf.s"
 
 .globl  main
 .data

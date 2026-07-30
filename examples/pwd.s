@@ -1,3 +1,5 @@
+.include "printstr.s"
+
 .globl main
 .data
 buf:

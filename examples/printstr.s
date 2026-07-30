@@ -2,11 +2,11 @@
 .text
 printStr:
 	mv t0, a0
-	# loop until null byte
-loop:
+	# printStr_loop until null byte
+printStr_loop:
 	lb t1, 0(t0)
 	addi t0, t0, 1
-	bnez t1, loop
+	bnez t1, printStr_loop
 	
 	# Compute length
 	sub a2, t0, a0
