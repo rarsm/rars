@@ -727,8 +727,8 @@ public class Assembler {
             } else {
                 this.dataAddress.set(this.alignToBoundary(this.dataAddress.get(),(int)Math.pow(2,value)));
             }
-        } else if (direct == Directives.SPACE) {
-            // TODO: add a fill type option
+        } else if (direct == Directives.SPACE || direct == Directives.ZERO || direct == Directives.SKIP) {
+            // TODO: add a fill value option
             // .space 90, 1 should fill memory with 90 bytes with the values 1
             if (passesDataSegmentCheck(token)) {
                 if (tokens.size() != 2) {
