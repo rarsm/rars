@@ -197,6 +197,9 @@ public class Assembler {
                                 statement.getStrippedTokenList().get(0), errors);
                     }
                     textSegmentLines.add(statement);
+                    // Update the textAddress pointer because the logic for adding fake instructions when START AT MAIN is enabled also needs this value to point after the last inserted instruction, and the logic for expanding pseudoinstructions modifies it
+                    textAddress.set(statement.getAddress());
+                    textAddress.increment(Instruction.INSTRUCTION_LENGTH);
                 } else if (statement.getInstruction() != null) {
                     // It is a pseudo-instruction:
                     // 1. Fetch its basic instruction template list
@@ -232,7 +235,7 @@ public class Assembler {
                     templateList = inst.getBasicIntructionTemplateList();
 
 
-                    // subsequent ProgramStatement constructor needs the correct text segment address.
+                    // subsequent ProgramStatement constructor needs the correct text segment address. The logic for adding fake instructions when START AT MAIN is enabled also needs this value to point after the last inserted instruction.
                     textAddress.set(statement.getAddress());
                     // Will generate one basic instruction for each template in the list.
                     int PC = textAddress.get(); // Save the starting PC so that it can be used for PC relative stuff
