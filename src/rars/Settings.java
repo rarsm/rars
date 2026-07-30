@@ -231,18 +231,24 @@ public class Settings extends Observable {
      * Font for data segment highlighted background
      */
     public static final int EXPLICIT_READ_HIGHLIGHT_FONT = 6;
+    /**
+     * Font for message pane
+     */
+    public static final int MESSAGE_PANE_FONT = 7;
+
+
 
     private static final String[] fontFamilySettingsKeys = {"EditorFontFamily", "EvenRowFontFamily",
             "OddRowFontFamily", " TextSegmentHighlightFontFamily", "TextSegmentDelayslotHighightFontFamily",
-            "ExplicitWriteHighlightFontFamily","ExplicitReadHighlightFontFamily"
+            "ExplicitWriteHighlightFontFamily","ExplicitReadHighlightFontFamily", "MessagePaneFontFamily"
     };
     private static final String[] fontStyleSettingsKeys = {"EditorFontStyle", "EvenRowFontStyle",
             "OddRowFontStyle", " TextSegmentHighlightFontStyle", "TextSegmentDelayslotHighightFontStyle",
-            "ExplicitWriteHighlightFontStyle", "ExplicitWriteHighlightFontStyle"
+            "ExplicitWriteHighlightFontStyle", "ExplicitWriteHighlightFontStyle", "MessagePaneFontStyle"
     };
     private static final String[] fontSizeSettingsKeys = {"EditorFontSize", "EvenRowFontSize",
             "OddRowFontSize", " TextSegmentHighlightFontSize", "TextSegmentDelayslotHighightFontSize",
-            "ExplicitWriteHighlightFontSize", "ExplicitWriteHighlightFontSize"
+            "ExplicitWriteHighlightFontSize", "ExplicitWriteHighlightFontSize", "MessagePaneFontSize"
     };
 
 
@@ -258,12 +264,12 @@ public class Settings extends Observable {
     // correctly rendering the left parenthesis character in the editor or text segment display.
     // See http://www.mirthcorp.com/community/issues/browse/MIRTH-1921?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel
     private static final String[] defaultFontFamilySettingsValues = {"Monospaced", "Monospaced", "Monospaced",
-            "Monospaced", "Monospaced", "Monospaced", "Monospaced"
+            "Monospaced", "Monospaced", "Monospaced", "Monospaced", "Monospaced"
     };
     private static final String[] defaultFontStyleSettingsValues = {"Plain", "Plain", "Plain", "Plain",
-            "Plain", "Plain", "Plain"
+            "Plain", "Plain", "Plain", "Plain"
     };
-    private static final String[] defaultFontSizeSettingsValues = {"12", "12", "12", "12", "12", "12", "12",
+    private static final String[] defaultFontSizeSettingsValues = {"12", "12", "12", "12", "12", "12", "12", "12"
     };
 
 

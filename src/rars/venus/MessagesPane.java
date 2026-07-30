@@ -20,6 +20,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.concurrent.ArrayBlockingQueue;
 
 /**
@@ -28,7 +30,7 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author Team JSpim
  **/
 
-public class MessagesPane extends JPanel {
+public class MessagesPane extends JPanel implements Observer {
     private final Box runButtonBox;
     private final JRadioButton buttonPopup;
     private final JRadioButton buttonInteractive;
@@ -55,6 +57,8 @@ public class MessagesPane extends JPanel {
 
     public MessagesPane() {
         super();
+        Globals.getSettings().addObserver(this); // for bellow update() method if font change
+
         this.setMinimumSize(new Dimension(0, 0));
         leftPane = new JTabbedPane();
         assemble = new JTextArea();
@@ -70,7 +74,7 @@ public class MessagesPane extends JPanel {
         // pane, will make messages more readable.  For run
         // pane, will allow properly aligned "text graphics"
         // DPS 15 Dec 2008
-        Font monoFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
+        Font monoFont = Globals.getSettings().getFontByPosition(Settings.MESSAGE_PANE_FONT);
         assemble.setFont(monoFont);
         run.setFont(monoFont);
         input.setFont(monoFont);
@@ -269,6 +273,19 @@ public class MessagesPane extends JPanel {
         }
         // Force the repaint and the application of the look-and-feel
         SwingUtilities.updateComponentTreeUI(runioContent);
+    }
+
+    /**
+     * Update, if pane is visible, when Font setting changes.
+     * This method is specified by the Observer interface.
+     */
+    public void update(Observable fontChanger, Object arg) {
+        Font newFont = Globals.getSettings().getFontByPosition(Settings.MESSAGE_PANE_FONT);
+        assemble.setFont(newFont);
+        run.setFont(newFont);
+        input.setFont(newFont);
+        output.setFont(newFont);
+        programArguments.setFont(newFont);
     }
 
     // Center given button in a box, centered vertically and 6 pixels on left and right
