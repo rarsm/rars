@@ -289,7 +289,7 @@ public class Assembler {
         // if the setting START AT MAIN is checked, we inject a synthetic return pad
         // and allow the user to put "ret" in main to emulate a compiled code.
         if (Globals.getSettings().getBooleanSetting(Settings.Bool.START_AT_MAIN)) {
-            int endOfTextOffset = textAddress.get();
+            int endOfTextOffset = textAddress.get()+0x200; // move it away
             Memory.addressEndOfTextSegment = endOfTextOffset;
             ProgramStatement fakeInstr1 = new ProgramStatement(0x05d00893, endOfTextOffset ); // li a7, 93 ; exit2
             machineList.add(fakeInstr1);
