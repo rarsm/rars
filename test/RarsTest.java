@@ -199,6 +199,7 @@ public class RarsTest {
         opt.selfModifyingCode = true;
         Program p = new Program(opt);
         Globals.getSettings().setBooleanSettingNonPersistent(Settings.Bool.SELF_MODIFYING_CODE_ENABLED, true);
+        Globals.getSettings().setBooleanSettingNonPersistent(Settings.Bool.START_AT_MAIN, true);
 
         ArrayList<Instruction> insts = Globals.instructionSet.getInstructionList();
         for(Instruction inst : insts){
