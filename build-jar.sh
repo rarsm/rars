@@ -3,7 +3,7 @@ if git submodule status | grep \( > /dev/null ; then
     version=$(git describe --tags --match 'v*' --dirty | cut -c2-)
     echo "Version = $version" > src/Version.properties
     mkdir -p build
-    find src -name "*.java" | xargs javac --release 11 -d build
+    find src -name "*.java" | xargs javac --release 21 -d build
     if [[ "$OSTYPE" == "darwin"* ]]; then
         find src -type f -not -name "*.java" -exec rsync -R {} build \;
     else
