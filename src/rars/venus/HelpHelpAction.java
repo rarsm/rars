@@ -164,58 +164,11 @@ public class HelpHelpAction extends GuiAction {
         else
             helpRemarksColor = "CCFF99";
         // Introductory remarks go at the top as a label
-        // TODO: update this to consider 12 and 20 bit numbers rather than 16
-        String helpRemarks =
-                "<html><center><table bgcolor=\"#" + helpRemarksColor + "\" border=0 cellpadding=0>" +// width="+this.getSize().getWidth()+">"+
-                        "<tr>" +
-                        "<th colspan=2><b><i><font size=+1>&nbsp;&nbsp;Operand Key for Example Instructions&nbsp;&nbsp;</font></i></b></th>" +
-                        "</tr>" +
-                        "<tr>" +
-                        "<td><tt>label, target</tt></td><td>any textual label</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>t1, t2, t3</tt></td><td>any integer register</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>f2, f4, f6</tt></td><td><i>even-numbered</i> floating point register</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>f0, f1, f3</tt></td><td><i>any</i> floating point register</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>10</tt></td><td>unsigned 5-bit integer (0 to 31)</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>-100</tt></td><td>signed 16-bit integer (-32768 to 32767)</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>100</tt></td><td>unsigned 16-bit integer (0 to 65535)</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>100000</tt></td><td>signed 32-bit integer (-2147483648 to 2147483647)</td>" +
-                        "</tr><tr>" +
-                        "</tr><tr>" +
-                        "<td colspan=2><b><i><font size=+1>Load & Store addressing mode, basic instructions</font></i></b></td>" +
-                        "</tr><tr>" +
-                        "<td><tt>-100(t2)</tt></td><td>sign-extended 16-bit integer added to contents of t2</td>" +
-                        "</tr><tr>" +
-                        "</tr><tr>" +
-                        "<td colspan=2><b><i><font size=+1>Load & Store addressing modes, pseudo instructions</font></i></b></td>" +
-                        "</tr><tr>" +
-                        "<td><tt>(t2)</tt></td><td>contents of t2</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>-100</tt></td><td>signed 16-bit integer</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>100</tt></td><td>unsigned 16-bit integer</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>100000</tt></td><td>signed 32-bit integer</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>100(t2)</tt></td><td>zero-extended unsigned 16-bit integer added to contents of t2</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>100000(t2)</tt></td><td>signed 32-bit integer added to contents of t2</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>label</tt></td><td>32-bit address of label</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>label(t2)</tt></td><td>32-bit address of label added to contents of t2</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>label+100000</tt></td><td>32-bit integer added to label's address</td>" +
-                        "</tr><tr>" +
-                        "<td><tt>label+100000(t2)&nbsp;&nbsp;&nbsp;</tt></td><td>sum of 32-bit integer, label's address, and contents of t2</td>" +
-                        "</tr>" +
-                        "</table></center></html>";
+        // Moved to a separated file.
+        String helpRemarks = loadFiletoStringBuilder(Globals.helpPath + "HelpRemarks.html")
+            .toString()
+            .replace("<!--COLOR-->", helpRemarksColor);
+        
         // Original code:         mipsHelpInfo.add(new JLabel(helpRemarks, JLabel.CENTER), BorderLayout.NORTH);
         JLabel helpRemarksLabel = new JLabel(helpRemarks, JLabel.CENTER);
         helpRemarksLabel.setOpaque(true);
