@@ -629,19 +629,9 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
         if (table == null) {
             return;
         }
-        Font possibleFonts[] = {
-            Globals.getSettings().getFontByPosition(Settings.TEXTSEGMENT_HIGHLIGHT_FONT),
-            Globals.getSettings().getFontByPosition(Settings.EVEN_ROW_FONT),
-            Globals.getSettings().getFontByPosition(Settings.ODD_ROW_FONT),
-        };
-        int maxHeight = 0;
-        for (int i = 0; i < possibleFonts.length; i++) {
-            int height = getFontMetrics(possibleFonts[i]).getHeight();
-            if (height > maxHeight) {
-                maxHeight = height;
-            }
-        }
-        table.setRowHeight(maxHeight);
+        Font currentFont = Globals.getSettings().getFontByPosition(Settings.EVEN_AND_ODD_ROW_FONT);
+        int height = getFontMetrics(currentFont).getHeight();
+        table.setRowHeight(height);
     }
 
 
@@ -800,15 +790,15 @@ public class TextSegmentWindow extends JInternalFrame implements Observer {
             if (highlighting && textSegment.getIntCodeAddressAtRow(row) == highlightAddress) {
                 cell.setBackground(settings.getColorSettingByPosition(Settings.TEXTSEGMENT_HIGHLIGHT_BACKGROUND));
                 cell.setForeground(settings.getColorSettingByPosition(Settings.TEXTSEGMENT_HIGHLIGHT_FOREGROUND));
-                cell.setFont(settings.getFontByPosition(Settings.TEXTSEGMENT_HIGHLIGHT_FONT));
+                cell.setFont(settings.getFontByPosition(Settings.EVEN_AND_ODD_ROW_FONT));
             } else if (row % 2 == 0) {
                 cell.setBackground(settings.getColorSettingByPosition(Settings.EVEN_ROW_BACKGROUND));
                 cell.setForeground(settings.getColorSettingByPosition(Settings.EVEN_ROW_FOREGROUND));
-                cell.setFont(settings.getFontByPosition(Settings.EVEN_ROW_FONT));
+                cell.setFont(settings.getFontByPosition(Settings.EVEN_AND_ODD_ROW_FONT));
             } else {
                 cell.setBackground(settings.getColorSettingByPosition(Settings.ODD_ROW_BACKGROUND));
                 cell.setForeground(settings.getColorSettingByPosition(Settings.ODD_ROW_FOREGROUND));
-                cell.setFont(settings.getFontByPosition(Settings.ODD_ROW_FONT));
+                cell.setFont(settings.getFontByPosition(Settings.EVEN_AND_ODD_ROW_FONT));
             }
             return cell;
         }

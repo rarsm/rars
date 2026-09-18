@@ -210,40 +210,17 @@ public class Settings extends Observable {
     /**
      * Font for table even row background (text, data, register displays)
      */
-    public static final int EVEN_ROW_FONT = 1;
+    public static final int EVEN_AND_ODD_ROW_FONT = 1;
     /**
-     * Font for table odd row background (text, data, register displays)
+     * Font for message pane
      */
-    public static final int ODD_ROW_FONT = 2;
-    /**
-     * Font for table odd row foreground (text, data, register displays)
-     */
-    public static final int TEXTSEGMENT_HIGHLIGHT_FONT = 3;
-    /**
-     * Font for text segment delay slot highlighted background
-     */
-    public static final int TEXTSEGMENT_DELAYSLOT_HIGHLIGHT_FONT = 4;
-    /**
-     * Font for data segment highlighted background
-     */
-    public static final int EXPLICIT_WRITE_HIGHLIGHT_FONT = 5;
-    /**
-     * Font for data segment highlighted background
-     */
-    public static final int EXPLICIT_READ_HIGHLIGHT_FONT = 6;
+    public static final int MESSAGE_PANE_FONT = 2;
 
-    private static final String[] fontFamilySettingsKeys = {"EditorFontFamily", "EvenRowFontFamily",
-            "OddRowFontFamily", " TextSegmentHighlightFontFamily", "TextSegmentDelayslotHighightFontFamily",
-            "ExplicitWriteHighlightFontFamily","ExplicitReadHighlightFontFamily"
-    };
-    private static final String[] fontStyleSettingsKeys = {"EditorFontStyle", "EvenRowFontStyle",
-            "OddRowFontStyle", " TextSegmentHighlightFontStyle", "TextSegmentDelayslotHighightFontStyle",
-            "ExplicitWriteHighlightFontStyle", "ExplicitWriteHighlightFontStyle"
-    };
-    private static final String[] fontSizeSettingsKeys = {"EditorFontSize", "EvenRowFontSize",
-            "OddRowFontSize", " TextSegmentHighlightFontSize", "TextSegmentDelayslotHighightFontSize",
-            "ExplicitWriteHighlightFontSize", "ExplicitWriteHighlightFontSize"
-    };
+
+
+    private static final String[] fontFamilySettingsKeys = {"EditorFontFamily", "EvenAndOddRowFontFamily","MessagePaneFontFamily"};
+    private static final String[] fontStyleSettingsKeys = {"EditorFontStyle", "EvenAndOddRowFontStyle", "MessagePaneFontStyle"};
+    private static final String[] fontSizeSettingsKeys = {"EditorFontSize", "EvenAndOddRowFontSize","MessagePaneFontSize"};
 
 
     /**
@@ -257,14 +234,9 @@ public class Settings extends Observable {
     // Changed default font family from "Courier New" to "Monospaced" after receiving reports that Mac were not
     // correctly rendering the left parenthesis character in the editor or text segment display.
     // See http://www.mirthcorp.com/community/issues/browse/MIRTH-1921?page=com.atlassian.jira.plugin.system.issuetabpanels:all-tabpanel
-    private static final String[] defaultFontFamilySettingsValues = {"Monospaced", "Monospaced", "Monospaced",
-            "Monospaced", "Monospaced", "Monospaced", "Monospaced"
-    };
-    private static final String[] defaultFontStyleSettingsValues = {"Plain", "Plain", "Plain", "Plain",
-            "Plain", "Plain", "Plain"
-    };
-    private static final String[] defaultFontSizeSettingsValues = {"12", "12", "12", "12", "12", "12", "12",
-    };
+    private static final String[] defaultFontFamilySettingsValues = {"Monospaced", "Monospaced", "Monospaced"};
+    private static final String[] defaultFontStyleSettingsValues = {"Plain", "Plain", "Plain"};
+    private static final String[] defaultFontSizeSettingsValues = {"12", "12", "12"};
 
 
     // COLOR SETTINGS.  Each array position has associated name.

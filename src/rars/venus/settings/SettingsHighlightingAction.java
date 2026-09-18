@@ -4,8 +4,6 @@ import rars.Globals;
 import rars.Settings;
 import rars.venus.ExecutePane;
 import rars.venus.GuiAction;
-import rars.venus.MonoRightCellRenderer;
-import rars.venus.util.AbstractFontSettingDialog;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -42,18 +40,10 @@ public class SettingsHighlightingAction extends GuiAction {
             Settings.ODD_ROW_FOREGROUND
     };
 
-    private static final int[] fontSettingPositions = {
-            Settings.TEXTSEGMENT_HIGHLIGHT_FONT,
-            Settings.TEXTSEGMENT_DELAYSLOT_HIGHLIGHT_FONT,
-            Settings.EXPLICIT_WRITE_HIGHLIGHT_FONT,
-            Settings.EXPLICIT_READ_HIGHLIGHT_FONT,
-            Settings.EVEN_ROW_FONT,
-            Settings.ODD_ROW_FONT
-    };
+    private static final Font defaultFont = new Font(Font.MONOSPACED, Font.PLAIN, 12);
 
     JButton[] backgroundButtons;
     JButton[] foregroundButtons;
-    JButton[] fontButtons;
     JCheckBox[] defaultCheckBoxes;
     JLabel[] samples;
     Color[] currentNondefaultBackground, currentNondefaultForeground;
@@ -69,7 +59,6 @@ public class SettingsHighlightingAction extends GuiAction {
     private static final String SAMPLE_TOOL_TIP_TEXT = "Preview based on background and text color settings";
     private static final String BACKGROUND_TOOL_TIP_TEXT = "Click, to select background color";
     private static final String FOREGROUND_TOOL_TIP_TEXT = "Click, to select text color";
-    private static final String FONT_TOOL_TIP_TEXT = "Click, to select text font";
     private static final String DEFAULT_TOOL_TIP_TEXT = "Check, to select default color (disables color select buttons)";
     // Tool tips for the control buttons along the bottom
     public static final String CLOSE_TOOL_TIP_TEXT = "Apply current settings and close dialog";
@@ -79,7 +68,6 @@ public class SettingsHighlightingAction extends GuiAction {
     // Tool tips for the data and register highlighting enable/disable controls
     private static final String EXPLICIT_WRITE_HIGHLIGHT_ENABLE_TOOL_TIP_TEXT = "Click, to enable or disable explicit writing highlighting";
     private static final String EXPLICIT_READ_HIGHLIGHT_ENABLE_TOOL_TIP_TEXT = "Click, to enable or disable explicit reading highlighting";
-    private static final String fontButtonText = "font";
 
     /**
      * Create a new SettingsEditorAction.  Has all the GuiAction parameters.
@@ -94,7 +82,7 @@ public class SettingsHighlightingAction extends GuiAction {
      * editor settings.
      */
     public void actionPerformed(ActionEvent e) {
-        highlightDialog = new JDialog(Globals.getGui(), "Runtime Table Highlighting Colors and Fonts", true);
+        highlightDialog = new JDialog(Globals.getGui(), "Runtime Table Highlighting Colors", true);
         highlightDialog.setContentPane(buildDialogPanel());
         highlightDialog.setDefaultCloseOperation(
                 JDialog.DO_NOTHING_ON_CLOSE);
@@ -124,23 +112,19 @@ public class SettingsHighlightingAction extends GuiAction {
 
         backgroundButtons = new JButton[backgroundSettingPositions.length];
         foregroundButtons = new JButton[backgroundSettingPositions.length];
-        fontButtons = new JButton[backgroundSettingPositions.length];
         defaultCheckBoxes = new JCheckBox[backgroundSettingPositions.length];
         samples = new JLabel[backgroundSettingPositions.length];
         for (int i = 0; i < backgroundSettingPositions.length; i++) {
             backgroundButtons[i] = new ColorSelectButton();
             foregroundButtons[i] = new ColorSelectButton();
-            fontButtons[i] = new JButton(fontButtonText);
             defaultCheckBoxes[i] = new JCheckBox();
             samples[i] = new JLabel(" preview ");
             backgroundButtons[i].addActionListener(new BackgroundChanger(i));
             foregroundButtons[i].addActionListener(new ForegroundChanger(i));
-            fontButtons[i].addActionListener(new FontChanger(i));
             defaultCheckBoxes[i].addItemListener(new DefaultChanger(i));
             samples[i].setToolTipText(SAMPLE_TOOL_TIP_TEXT);
             backgroundButtons[i].setToolTipText(BACKGROUND_TOOL_TIP_TEXT);
             foregroundButtons[i].setToolTipText(FOREGROUND_TOOL_TIP_TEXT);
-            fontButtons[i].setToolTipText(FONT_TOOL_TIP_TEXT);
             defaultCheckBoxes[i].setToolTipText(DEFAULT_TOOL_TIP_TEXT);
         }
 
@@ -149,7 +133,6 @@ public class SettingsHighlightingAction extends GuiAction {
         for (int i = 0; i < backgroundSettingPositions.length; i++) {
             patches.add(backgroundButtons[i]);
             patches.add(foregroundButtons[i]);
-            patches.add(fontButtons[i]);
             patches.add(defaultCheckBoxes[i]);
         }
 
@@ -294,11 +277,9 @@ public class SettingsHighlightingAction extends GuiAction {
         for (int i = 0; i < backgroundSettingPositions.length; i++) {
             backgroundSetting = settings.getColorSettingByPosition(backgroundSettingPositions[i]);
             foregroundSetting = settings.getColorSettingByPosition(foregroundSettingPositions[i]);
-            fontSetting = settings.getFontByPosition(fontSettingPositions[i]);
+            fontSetting = defaultFont;
             backgroundButtons[i].setBackground(backgroundSetting);
             foregroundButtons[i].setBackground(foregroundSetting);
-            fontButtons[i].setFont(MonoRightCellRenderer.MONOSPACED_PLAIN_12POINT); //fontSetting);
-            fontButtons[i].setMargin(new Insets(4, 4, 4, 4));
             initialFont[i] = currentFont[i] = fontSetting;
             currentNondefaultBackground[i] = backgroundSetting;
             currentNondefaultForeground[i] = foregroundSetting;
@@ -311,12 +292,10 @@ public class SettingsHighlightingAction extends GuiAction {
             samples[i].setForeground(foregroundSetting);
             samples[i].setFont(fontSetting);
             boolean usingDefaults = backgroundSetting.equals(settings.getDefaultColorSettingByPosition(backgroundSettingPositions[i])) &&
-                    foregroundSetting.equals(settings.getDefaultColorSettingByPosition(foregroundSettingPositions[i])) &&
-                    fontSetting.equals(settings.getDefaultFontByPosition(fontSettingPositions[i]));
+                    foregroundSetting.equals(settings.getDefaultColorSettingByPosition(foregroundSettingPositions[i]));
             defaultCheckBoxes[i].setSelected(usingDefaults);
             backgroundButtons[i].setEnabled(!usingDefaults);
             foregroundButtons[i].setEnabled(!usingDefaults);
-            fontButtons[i].setEnabled(!usingDefaults);
         }
         currentExplicitWriteHighlightSetting = initialExplicitWriteHighlightSetting = settings.getBooleanSetting(Settings.Bool.EXPLICIT_WRITE_HIGHLIGHTING);
         currentExplicitReadHighlightSetting = initialExplicitReadHighlightSetting = settings.getBooleanSetting(Settings.Bool.EXPLICIT_READ_HIGHLIGHTING);
@@ -329,7 +308,6 @@ public class SettingsHighlightingAction extends GuiAction {
         for (int i = 0; i < backgroundSettingPositions.length; i++) {
             settings.setColorSettingByPosition(backgroundSettingPositions[i], backgroundButtons[i].getBackground());
             settings.setColorSettingByPosition(foregroundSettingPositions[i], foregroundButtons[i].getBackground());
-            settings.setFontByPosition(fontSettingPositions[i], samples[i].getFont());//fontButtons[i].getFont());			
         }
         settings.setBooleanSetting(Settings.Bool.EXPLICIT_WRITE_HIGHLIGHTING, currentExplicitWriteHighlightSetting);
         settings.setBooleanSetting(Settings.Bool.EXPLICIT_READ_HIGHLIGHTING, currentExplicitReadHighlightSetting);
@@ -361,17 +339,14 @@ public class SettingsHighlightingAction extends GuiAction {
             fontSetting = initialFont[i];
             backgroundButtons[i].setBackground(backgroundSetting);
             foregroundButtons[i].setBackground(foregroundSetting);
-            //fontButtons[i].setFont(fontSetting);	
             samples[i].setBackground(backgroundSetting);
             samples[i].setForeground(foregroundSetting);
             samples[i].setFont(fontSetting);
             boolean usingDefaults = backgroundSetting.equals(settings.getDefaultColorSettingByPosition(backgroundSettingPositions[i])) &&
-                    foregroundSetting.equals(settings.getDefaultColorSettingByPosition(foregroundSettingPositions[i])) &&
-                    fontSetting.equals(settings.getDefaultFontByPosition(fontSettingPositions[i]));
+                    foregroundSetting.equals(settings.getDefaultColorSettingByPosition(foregroundSettingPositions[i]));
             defaultCheckBoxes[i].setSelected(usingDefaults);
             backgroundButtons[i].setEnabled(!usingDefaults);
             foregroundButtons[i].setEnabled(!usingDefaults);
-            fontButtons[i].setEnabled(!usingDefaults);
         }
     }
 
@@ -427,30 +402,6 @@ public class SettingsHighlightingAction extends GuiAction {
         }
     }
 
-
-    /////////////////////////////////////////////////////////////////
-    //
-    //  Class that handles click on the font select button
-    //
-    private class FontChanger implements ActionListener {
-        private int position;
-
-        public FontChanger(int pos) {
-            position = pos;
-        }
-
-        public void actionPerformed(ActionEvent e) {
-            JButton button = (JButton) e.getSource();
-            FontSettingDialog fontDialog = new FontSettingDialog(null, "Select Text Font", samples[position].getFont());
-            Font newFont = fontDialog.showDialog();
-            if (newFont != null) {
-                //button.setFont(newFont);
-                samples[position].setFont(newFont);
-            }
-        }
-    }
-
-
     /////////////////////////////////////////////////////////////////
     //
     // Class that handles action (check, uncheck) on the Default checkbox.
@@ -467,106 +418,25 @@ public class SettingsHighlightingAction extends GuiAction {
             // If deselected: enable buttons, set their bg values from current setting, set sample bg & bg
             Color newBackground = null;
             Color newForeground = null;
-            Font newFont = null;
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 backgroundButtons[position].setEnabled(false);
                 foregroundButtons[position].setEnabled(false);
-                fontButtons[position].setEnabled(false);
                 newBackground = Globals.getSettings().getDefaultColorSettingByPosition(backgroundSettingPositions[position]);
                 newForeground = Globals.getSettings().getDefaultColorSettingByPosition(foregroundSettingPositions[position]);
-                newFont = Globals.getSettings().getDefaultFontByPosition(fontSettingPositions[position]);
                 currentNondefaultBackground[position] = backgroundButtons[position].getBackground();
                 currentNondefaultForeground[position] = foregroundButtons[position].getBackground();
                 currentNondefaultFont[position] = samples[position].getFont();
             } else {
                 backgroundButtons[position].setEnabled(true);
                 foregroundButtons[position].setEnabled(true);
-                fontButtons[position].setEnabled(true);
                 newBackground = currentNondefaultBackground[position];
                 newForeground = currentNondefaultForeground[position];
-                newFont = currentNondefaultFont[position];
             }
             backgroundButtons[position].setBackground(newBackground);
             foregroundButtons[position].setBackground(newForeground);
-            //fontButtons[position].setFont(newFont);
             samples[position].setBackground(newBackground);
             samples[position].setForeground(newForeground);
-            samples[position].setFont(newFont);
         }
-    }
-
-    ///////////////////////////////////////////////////////////////////
-    //
-    // Modal dialog to set a font.
-    //
-    private class FontSettingDialog extends AbstractFontSettingDialog {
-        private boolean resultOK;
-
-        public FontSettingDialog(Frame owner, String title, Font currentFont) {
-            super(owner, title, true, currentFont);
-        }
-
-        private Font showDialog() {
-            resultOK = true;
-            // Because dialog is modal, this blocks until user terminates the dialog.
-            this.setVisible(true);
-            return resultOK ? getFont() : null;
-        }
-
-        protected void closeDialog() {
-            this.setVisible(false);
-        }
-
-        private void performOK() {
-            resultOK = true;
-        }
-
-        private void performCancel() {
-            resultOK = false;
-        }
-
-        // Control buttons for the dialog.
-        protected Component buildControlPanel() {
-            Box controlPanel = Box.createHorizontalBox();
-            JButton okButton = new JButton("OK");
-            okButton.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            performOK();
-                            closeDialog();
-                        }
-                    });
-            JButton cancelButton = new JButton("Cancel");
-            cancelButton.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            performCancel();
-                            closeDialog();
-                        }
-                    });
-            JButton resetButton = new JButton("Reset");
-            resetButton.addActionListener(
-                    new ActionListener() {
-                        public void actionPerformed(ActionEvent e) {
-                            reset();
-                        }
-                    });
-            controlPanel.add(Box.createHorizontalGlue());
-            controlPanel.add(okButton);
-            controlPanel.add(Box.createHorizontalGlue());
-            controlPanel.add(cancelButton);
-            controlPanel.add(Box.createHorizontalGlue());
-            controlPanel.add(resetButton);
-            controlPanel.add(Box.createHorizontalGlue());
-            return controlPanel;
-        }
-
-
-        // required by Abstract super class but not used here.
-        protected void apply(Font font) {
-
-        }
-
     }
 
 }

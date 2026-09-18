@@ -62,7 +62,7 @@ public class VenusUI extends JFrame {
             settingsExtended, settingsAssembleOnOpen, settingsAssembleAll, settingsAssembleOpen, settingsWarningsAreErrors,
             settingsStartAtMain, settingsSelfModifyingCode, settingsRV64, settingsDeriveCurrentWorkingDirectory, settingsDarkMode, 
             settingsDisplayRegisterNumbers;
-    private JMenuItem settingsExceptionHandler, settingsEditor, settingsHighlighting, settingsMemoryConfiguration;
+    private JMenuItem settingsExceptionHandler, settingsEditor, settingsFonts, settingsHighlighting, settingsMemoryConfiguration;
     private JMenuItem helpHelp, helpAbout;
 
     // components of the toolbar
@@ -86,7 +86,7 @@ public class VenusUI extends JFrame {
     private Action settingsLabelAction, settingsValueDisplayBaseAction, settingsAddressDisplayBaseAction,
             settingsExtendedAction, settingsAssembleOnOpenAction, settingsAssembleOpenAction, settingsAssembleAllAction,
             settingsWarningsAreErrorsAction, settingsStartAtMainAction,
-            settingsExceptionHandlerAction, settingsEditorAction, settingsHighlightingAction, settingsMemoryConfigurationAction,
+            settingsExceptionHandlerAction, settingsEditorAction, settingsFontsAction, settingsHighlightingAction, settingsMemoryConfigurationAction,
             settingsSelfModifyingCodeAction, settingsRV64Action, settingsDeriveCurrentWorkingDirectoryAction, settingsDarkModeAction,
             settingsDisplayRegisterNumbersAction;
     private Action helpHelpAction, helpAboutAction;
@@ -449,6 +449,9 @@ public class VenusUI extends JFrame {
             settingsEditorAction = new SettingsEditorAction("Editor...", null,
                     "View and modify text editor settings.", null, null
             );
+            settingsFontsAction = new SettingsFontsAction("Fonts...", null,
+                            "View and modify font settings.", null, null
+            );
             settingsHighlightingAction = new SettingsHighlightingAction("Highlighting...", null,
                     "View and modify Execute Tab highlighting colors", null, null
             );
@@ -630,6 +633,7 @@ public class VenusUI extends JFrame {
         settingsStartAtMain = new JCheckBoxMenuItem(settingsStartAtMainAction);
         settingsStartAtMain.setSelected(Globals.getSettings().getBooleanSetting(Settings.Bool.START_AT_MAIN));
         settingsEditor = new JMenuItem(settingsEditorAction);
+        settingsFonts = new JMenuItem(settingsFontsAction);
         settingsHighlighting = new JMenuItem(settingsHighlightingAction);
         settingsExceptionHandler = new JMenuItem(settingsExceptionHandlerAction);
         settingsMemoryConfiguration = new JMenuItem(settingsMemoryConfigurationAction);
@@ -652,6 +656,7 @@ public class VenusUI extends JFrame {
         settings.add(settingsDarkMode);
         settings.add(settingsDisplayRegisterNumbers);
         settings.add(settingsEditor);
+        settings.add(settingsFonts);
         settings.add(settingsHighlighting);
         settings.add(settingsExceptionHandler);
         settings.add(settingsMemoryConfiguration);

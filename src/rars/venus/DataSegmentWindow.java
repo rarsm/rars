@@ -827,20 +827,9 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
         if (dataTable == null) {
             return;
         }
-        Font possibleFonts[] = {
-            settings.getFontByPosition(Settings.EXPLICIT_WRITE_HIGHLIGHT_FONT),
-            settings.getFontByPosition(Settings.EXPLICIT_READ_HIGHLIGHT_FONT),
-            settings.getFontByPosition(Settings.EVEN_ROW_FONT),
-            settings.getFontByPosition(Settings.ODD_ROW_FONT),
-        };
-        int maxHeight = 0;
-        for (int i = 0; i < possibleFonts.length; i++) {
-            int height = getFontMetrics(possibleFonts[i]).getHeight();
-            if (height > maxHeight) {
-                maxHeight = height;
-            }
-        }
-        dataTable.setRowHeight(maxHeight);
+        Font currentFont = settings.getFontByPosition(Settings.EVEN_AND_ODD_ROW_FONT);
+        int height = getFontMetrics(currentFont).getHeight();
+        dataTable.setRowHeight(height);
     }
 
 
@@ -995,26 +984,23 @@ public class DataSegmentWindow extends JInternalFrame implements Observer {
             JLabel cell = (JLabel) super.getTableCellRendererComponent(table, value,
                     isSelected, hasFocus, row, column);
 
+            cell.setFont(settings.getFontByPosition(Settings.EVEN_AND_ODD_ROW_FONT));
             cell.setHorizontalAlignment(SwingConstants.RIGHT);
             int rowFirstAddress = Binary.stringToInt(table.getValueAt(row, ADDRESS_COLUMN).toString());
             if (settings.getBooleanSetting(Settings.Bool.EXPLICIT_WRITE_HIGHLIGHTING) && addressHighlighting &&
                     rowFirstAddress == addressRowFirstAddress && column == addressColumn && writingHighlight) {
                 cell.setBackground(settings.getColorSettingByPosition(Settings.EXPLICIT_WRITE_HIGHLIGHT_BACKGROUND));
                 cell.setForeground(settings.getColorSettingByPosition(Settings.EXPLICIT_WRITE_HIGHLIGHT_FOREGROUND));
-                cell.setFont(settings.getFontByPosition(Settings.EXPLICIT_WRITE_HIGHLIGHT_FONT));
             } else if (settings.getBooleanSetting(Settings.Bool.EXPLICIT_READ_HIGHLIGHTING) && addressHighlighting &&
                     rowFirstAddress == addressRowFirstAddress && column == addressColumn && !writingHighlight) { //not writing highlight means reading highlight
                 cell.setBackground(settings.getColorSettingByPosition(Settings.EXPLICIT_READ_HIGHLIGHT_BACKGROUND));
                 cell.setForeground(settings.getColorSettingByPosition(Settings.EXPLICIT_READ_HIGHLIGHT_FOREGROUND));
-                cell.setFont(settings.getFontByPosition(Settings.EXPLICIT_READ_HIGHLIGHT_FONT));
             } else if (row % 2 == 0) {
                 cell.setBackground(settings.getColorSettingByPosition(Settings.EVEN_ROW_BACKGROUND));
                 cell.setForeground(settings.getColorSettingByPosition(Settings.EVEN_ROW_FOREGROUND));
-                cell.setFont(settings.getFontByPosition(Settings.EVEN_ROW_FONT));
             } else {
                 cell.setBackground(settings.getColorSettingByPosition(Settings.ODD_ROW_BACKGROUND));
                 cell.setForeground(settings.getColorSettingByPosition(Settings.ODD_ROW_FOREGROUND));
-                cell.setFont(settings.getFontByPosition(Settings.ODD_ROW_FONT));
             }
             return cell;
         }
