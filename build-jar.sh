@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 if git submodule status | grep \( > /dev/null ; then 
     version=$(git describe --tags --match 'v*' --dirty | cut -c2-)
     echo "Version = $version" > src/Version.properties
