@@ -435,6 +435,7 @@ public class Binary {
             for(; i < s.length(); i++){
                 char c = s.charAt(i);
                 if ('0' <= c && c <= '7') {
+                    if (result > (Integer.MAX_VALUE - (c - '0')) / 8) return null; // overflow; see the decimal case
                     result *= 8;
                     result += c - '0';
                 } else {
@@ -447,6 +448,10 @@ public class Binary {
             for(; i < s.length(); i++){
                 char c = s.charAt(i);
                 if ('0' <= c && c <= '9') {
+                    // Return null on overflow rather than wrapping: a wrapped value can come out
+                    // positive (5970567120 would become 1675599824). stringToInt falls back to
+                    // stringToLong and range-checks the result.
+                    if (result > (Integer.MAX_VALUE - (c - '0')) / 10) return null;
                     result *= 10;
                     result += c - '0';
                 } else {
